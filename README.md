@@ -29,6 +29,21 @@ with `--leader-history-paths` and `--leader-weight`.
 The script outputs the estimated chance of winning the title for each team. It then prints the probability of each side finishing in the bottom four and being relegated.
 It also estimates the average final position and points of every club.
 
+## Tie-break Rules
+
+When building the league table teams are ordered using the official Série A
+criteria:
+
+1. Points
+2. Number of wins
+3. Goal difference
+4. Goals scored
+5. Points obtained in the games between the tied sides
+6. Team name (alphabetical)
+
+These rules are implemented in :func:`league_table` and therefore affect all
+simulation utilities.
+
 ## Project Layout
 
 - `data/` – raw fixtures and results.
