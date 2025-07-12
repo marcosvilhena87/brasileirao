@@ -770,3 +770,59 @@ def simulate_final_table(
     df = pd.DataFrame(results)
     df = df.sort_values("position").reset_index(drop=True)
     return df
+
+
+def summary_table(
+    matches: pd.DataFrame,
+    iterations: int = 1000,
+    rating_method: str = "ratio",
+    rng: np.random.Generator | None = None,
+    elo_k: float = 20.0,
+    team_home_advantages: dict[str, float] | None = None,
+    leader_history_paths: list[str | Path] | None = None,
+    leader_history_weight: float = 0.5,
+) -> pd.DataFrame:
+    """Return combined projections for each team.
+
+    The returned ``DataFrame`` contains one row per club with the expected
+    final rank, projected point total rounded to an integer, title chance and
+    relegation probability. The table is sorted by projected position.
+    """
+
+    chances = simulate_chances(
+        matches,
+        iterations=iterations,
+        rating_method=rating_method,
+        rng=rng,
+        elo_k=elo_k,
+        team_home_advantages=team_home_advantages,
+        leader_history_paths=leader_history_paths,
+        leader_history_weight=leader_history_weight,
+    )
+    relegation = simulate_relegation_chances(
+        matches,
+        iterations=iterations,
+        rating_method=rating_method,
+        rng=rng,
+        elo_k=elo_k,
+        team_home_advantages=team_home_advantages,
+        leader_history_paths=leader_history_paths,
+        leader_history_weight=leader_history_weight,
+    )
+    table = simulate_final_table(
+        matches,
+        iterations=iterations,
+        rating_method=rating_method,
+        rng=rng,
+        elo_k=elo_k,
+        team_home_advantages=team_home_advantages,
+        leader_history_paths=leader_history_paths,
+        leader_history_weight=leader_history_weight,
+    )
+
+    table = table.sort_values("position").reset_index(drop=True)
+    table["position"] = range(1, len(table) + 1)
+    table["points"] = table["points"].round().astype(int)
+    table["title"] = table["team"].map(chances)
+    table["relegation"] = table["team"].map(relegation)
+    return table[["position", "team", "points", "title", "relegation"]]
