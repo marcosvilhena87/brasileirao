@@ -18,7 +18,9 @@ updates team ratings over time using an Elo formula; the `simulate_chances`
 function exposes an `elo_k` parameter for deterministic runs. Use the
 `--elo-k` CLI option or the `elo_k` function parameter to adjust the update
 factor (default `20.0`). Use the `--seed` option to set a random seed and
-reproduce a specific simulation.
+reproduce a specific simulation. You can also specify team-specific home
+advantage multipliers by passing a dictionary to the `team_home_advantages`
+argument of `simulate_chances`.
 
 The script outputs the estimated chance of winning the title for each team.
 

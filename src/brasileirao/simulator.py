@@ -126,6 +126,31 @@ def _estimate_strengths(matches: pd.DataFrame):
     return strengths, avg_goals, home_adv
 
 
+def _estimate_team_home_advantages(matches: pd.DataFrame) -> dict[str, float]:
+    """Return relative home advantage factors for each team."""
+    played = matches.dropna(subset=["home_score", "away_score"])
+    teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
+
+    total_home = played["home_score"].sum()
+    total_away = played["away_score"].sum()
+    baseline = total_home / total_away if total_away else 1.0
+
+    factors = {}
+    for t in teams:
+        home_games = played[played.home_team == t]
+        away_games = played[played.away_team == t]
+        if not len(home_games) or not len(away_games):
+            factors[t] = 1.0
+            continue
+        home_gpg = home_games["home_score"].mean()
+        away_gpg = away_games["away_score"].mean()
+        if away_gpg == 0 or np.isnan(home_gpg) or np.isnan(away_gpg):
+            factors[t] = 1.0
+        else:
+            factors[t] = float((home_gpg / away_gpg) / baseline)
+    return factors
+
+
 def estimate_strengths_with_history(
     current_matches: pd.DataFrame | None = None,
     past_path: str | Path = "data/Brasileirao2024A.txt",
@@ -301,6 +326,7 @@ def simulate_chances(
     rating_method: str = "ratio",
     rng: np.random.Generator | None = None,
     elo_k: float = 20.0,
+    team_home_advantages: dict[str, float] | None = None,
 ) -> dict[str, float]:
     """Simulate remaining fixtures and return title probabilities.
 
@@ -316,9 +342,15 @@ def simulate_chances(
         Random number generator to use. A new generator is created when ``None``.
     elo_k : float, default 20.0
         K factor when ``rating_method`` is ``"elo"``.
+    team_home_advantages : dict[str, float] | None, optional
+        Multiplicative home advantage factor for each team. When ``None``,
+        factors are estimated from played matches.
     """
     if rng is None:
         rng = np.random.default_rng()
+
+    if team_home_advantages is None:
+        team_home_advantages = _estimate_team_home_advantages(matches)
 
     if rating_method == "poisson":
         strengths, avg_goals, home_adv = estimate_poisson_strengths(matches)
@@ -341,7 +373,8 @@ def simulate_chances(
         for _, row in remaining.iterrows():
             ht = row['home_team']
             at = row['away_team']
-            mu_home = avg_goals * strengths[ht]['attack'] * strengths[at]['defense'] * home_adv
+            factor = team_home_advantages.get(ht, 1.0)
+            mu_home = avg_goals * strengths[ht]['attack'] * strengths[at]['defense'] * home_adv * factor
             mu_away = avg_goals * strengths[at]['attack'] * strengths[ht]['defense']
             hs = rng.poisson(mu_home)
             as_ = rng.poisson(mu_away)
