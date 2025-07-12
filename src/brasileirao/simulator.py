@@ -94,7 +94,7 @@ def league_table(matches: pd.DataFrame) -> pd.DataFrame:
         t['gd'] = t['gf'] - t['ga']
 
     df = pd.DataFrame(table.values())
-    df = df.sort_values(['points', 'gd', 'gf'], ascending=False).reset_index(drop=True)
+    df = df.sort_values(['points', 'gd', 'gf', 'team'], ascending=[False, False, False, True]).reset_index(drop=True)
     return df
 
 
