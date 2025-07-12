@@ -23,6 +23,12 @@ def main() -> None:
         default=None,
         help="random seed for repeatable simulations",
     )
+    parser.add_argument(
+        "--elo-k",
+        type=float,
+        default=20.0,
+        help="Elo K factor when using the 'elo' rating method",
+    )
     args = parser.parse_args()
 
     matches = parse_matches(args.file)
@@ -32,6 +38,7 @@ def main() -> None:
         iterations=args.simulations,
         rating_method=args.rating,
         rng=rng,
+        elo_k=args.elo_k,
     )
 
     print("Title chances:")
