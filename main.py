@@ -90,17 +90,17 @@ def main() -> None:
         leader_history_weight=args.leader_weight,
     )
 
-    print("Title chances:")
-    for team, prob in sorted(chances.items(), key=lambda x: x[1], reverse=True):
-        print(f"{team:15s} {prob:.2%}")
+    # print("Title chances:")
+    # for team, prob in sorted(chances.items(), key=lambda x: x[1], reverse=True):
+    #     print(f"{team:15s} {prob:.2%}")
 
-    print("\nRelegation chances:")
-    for team, prob in sorted(relegation.items(), key=lambda x: x[1], reverse=True):
-        print(f"{team:15s} {prob:.2%}")
+    # print("\nRelegation chances:")
+    # for team, prob in sorted(relegation.items(), key=lambda x: x[1], reverse=True):
+    #     print(f"{team:15s} {prob:.2%}")
 
-    print("\nExpected final position and points:")
-    for _, row in table_proj.iterrows():
-        print(f"{row['team']:15s} {row['position']:5.1f} {row['points']:5.1f}")
+    # print("\nExpected final position and points:")
+    # for _, row in table_proj.iterrows():
+    #     print(f"{row['team']:15s} {row['position']:5.1f} {row['points']:5.1f}")
 
     summary = table_proj.copy()
     summary["title"] = summary["team"].map(chances)
@@ -109,10 +109,14 @@ def main() -> None:
     summary["position"] = range(1, len(summary) + 1)
     summary["points"] = summary["points"].round().astype(int)
 
-    print("\nPos  Team            Points  Title   Relegation")
+    TITLE_W = 7
+    REL_W = 10
+    print(f"{'Pos':>3}  {'Team':15s} {'Points':>6} {'Title':^{TITLE_W}} {'Relegation':^{REL_W}}")
     for _, row in summary.iterrows():
+        title = f"{row['title']:.2%}"
+        releg = f"{row['relegation']:.2%}"
         print(
-            f"{row['position']:2d}   {row['team']:15s} {row['points']:6d} {row['title']:.2%} {row['relegation']:.2%}"
+            f"{row['position']:>2d}   {row['team']:15s} {row['points']:6d} {title:^{TITLE_W}} {releg:^{REL_W}}"
         )
 
 
