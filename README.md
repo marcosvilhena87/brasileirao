@@ -16,7 +16,9 @@ The `--rating` option accepts `ratio` (default), `historic_ratio`, `poisson`, or
 mixes results from the 2024 season with a lower weight. The `elo` method
 updates team ratings over time using an Elo formula; the `simulate_chances`
 function exposes an `elo_k` parameter for deterministic runs. Use the
-`--seed` option to set a random seed and reproduce a specific simulation.
+`--elo-k` CLI option or the `elo_k` function parameter to adjust the update
+factor (default `20.0`). Use the `--seed` option to set a random seed and
+reproduce a specific simulation.
 
 The script outputs the estimated chance of winning the title for each team.
 

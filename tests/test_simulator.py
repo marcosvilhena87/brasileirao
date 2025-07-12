@@ -87,6 +87,27 @@ def test_simulate_chances_elo_seed_repeatability():
     assert abs(sum(chances1.values()) - 1.0) < 1e-6
 
 
+def test_elo_k_value_changes_results():
+    df = parse_matches('data/Brasileirao2025A.txt')
+    rng = np.random.default_rng(99)
+    chances_low = simulate_chances(
+        df,
+        iterations=5,
+        rating_method="elo",
+        rng=rng,
+        elo_k=5.0,
+    )
+    rng = np.random.default_rng(99)
+    chances_high = simulate_chances(
+        df,
+        iterations=5,
+        rating_method="elo",
+        rng=rng,
+        elo_k=40.0,
+    )
+    assert chances_low != chances_high
+
+
 def test_simulate_chances_neg_binom_seed_repeatability():
     df = parse_matches('data/Brasileirao2025A.txt')
     rng = np.random.default_rng(7)
