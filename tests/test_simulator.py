@@ -309,3 +309,39 @@ def test_simulate_final_table_deterministic():
     pd.testing.assert_frame_equal(table1, table2)
     assert {"team", "position", "points"}.issubset(table1.columns)
     assert len(table1) == len(pd.unique(df[["home_team", "away_team"]].values.ravel()))
+
+
+def test_league_table_goal_difference_tiebreak():
+    data = [
+        {"date": "2025-01-01", "home_team": "A", "away_team": "B", "home_score": 1, "away_score": 2},
+        {"date": "2025-01-02", "home_team": "A", "away_team": "C", "home_score": 1, "away_score": 0},
+        {"date": "2025-01-03", "home_team": "C", "away_team": "A", "home_score": 0, "away_score": 1},
+        {"date": "2025-01-04", "home_team": "B", "away_team": "C", "home_score": 3, "away_score": 0},
+    ]
+    df = pd.DataFrame(data)
+    table = league_table(df)
+    assert list(table.team[:2]) == ["B", "A"]
+
+
+def test_league_table_goals_scored_tiebreak():
+    data = [
+        {"date": "2025-01-01", "home_team": "A", "away_team": "B", "home_score": 0, "away_score": 0},
+        {"date": "2025-01-02", "home_team": "B", "away_team": "A", "home_score": 0, "away_score": 0},
+        {"date": "2025-01-03", "home_team": "A", "away_team": "C", "home_score": 1, "away_score": 0},
+        {"date": "2025-01-04", "home_team": "B", "away_team": "C", "home_score": 2, "away_score": 1},
+    ]
+    df = pd.DataFrame(data)
+    table = league_table(df)
+    assert list(table.team[:2]) == ["B", "A"]
+
+
+def test_league_table_head_to_head_tiebreak():
+    data = [
+        {"date": "2025-01-01", "home_team": "A", "away_team": "B", "home_score": 0, "away_score": 0},
+        {"date": "2025-01-02", "home_team": "B", "away_team": "A", "home_score": 1, "away_score": 0},
+        {"date": "2025-01-03", "home_team": "A", "away_team": "C", "home_score": 1, "away_score": 0},
+        {"date": "2025-01-04", "home_team": "B", "away_team": "C", "home_score": 0, "away_score": 1},
+    ]
+    df = pd.DataFrame(data)
+    table = league_table(df)
+    assert list(table.team[:2]) == ["B", "A"]
