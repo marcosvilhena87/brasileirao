@@ -19,6 +19,7 @@ def main() -> None:
             "historic_ratio",
             "poisson",
             "neg_binom",
+            "skellam",
             "elo",
             "leader_history",
         ],
