@@ -105,13 +105,44 @@ def compute_leader_stats(matches: pd.DataFrame) -> dict[str, int]:
     teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
     leader_counts = {t: 0 for t in teams}
 
-    played_rows: list[dict] = []
+    # running totals for each team
+    stats = {t: {"points": 0, "gf": 0, "ga": 0} for t in teams}
+
     for _, row in matches.sort_values("date").iterrows():
         if pd.isna(row["home_score"]) or pd.isna(row["away_score"]):
             continue
-        played_rows.append(row.to_dict())
-        table = league_table(pd.DataFrame(played_rows))
-        leader_counts[table.iloc[0]["team"]] += 1
+
+        home = row["home_team"]
+        away = row["away_team"]
+        hs = int(row["home_score"])
+        as_ = int(row["away_score"])
+
+        # update goals for/against
+        stats[home]["gf"] += hs
+        stats[home]["ga"] += as_
+        stats[away]["gf"] += as_
+        stats[away]["ga"] += hs
+
+        # update points
+        if hs > as_:
+            stats[home]["points"] += 3
+        elif hs < as_:
+            stats[away]["points"] += 3
+        else:
+            stats[home]["points"] += 1
+            stats[away]["points"] += 1
+
+        # determine leader using current stats
+        ordered = sorted(
+            stats.items(),
+            key=lambda kv: (
+                -kv[1]["points"],
+                -(kv[1]["gf"] - kv[1]["ga"]),
+                -kv[1]["gf"],
+                kv[0],
+            ),
+        )
+        leader_counts[ordered[0][0]] += 1
 
     return leader_counts
 
