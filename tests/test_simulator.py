@@ -85,3 +85,23 @@ def test_simulate_chances_elo_seed_repeatability():
     )
     assert chances1 == chances2
     assert abs(sum(chances1.values()) - 1.0) < 1e-6
+
+
+def test_simulate_chances_neg_binom_seed_repeatability():
+    df = parse_matches('data/Brasileirao2025A.txt')
+    rng = np.random.default_rng(7)
+    chances1 = simulate_chances(
+        df,
+        iterations=5,
+        rating_method="neg_binom",
+        rng=rng,
+    )
+    rng = np.random.default_rng(7)
+    chances2 = simulate_chances(
+        df,
+        iterations=5,
+        rating_method="neg_binom",
+        rng=rng,
+    )
+    assert chances1 == chances2
+    assert abs(sum(chances1.values()) - 1.0) < 1e-6

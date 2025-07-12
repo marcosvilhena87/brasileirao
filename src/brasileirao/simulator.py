@@ -191,6 +191,52 @@ def estimate_poisson_strengths(matches: pd.DataFrame):
     return strengths, base_mu, home_adv
 
 
+def estimate_negative_binomial_strengths(matches: pd.DataFrame):
+    """Fit a Negative Binomial regression model to estimate team strengths."""
+    import statsmodels.api as sm
+    import statsmodels.formula.api as smf
+
+    played = matches.dropna(subset=["home_score", "away_score"])
+
+    rows: list[dict] = []
+    for _, row in played.iterrows():
+        rows.append({
+            "team": row["home_team"],
+            "opponent": row["away_team"],
+            "home": 1,
+            "goals": row["home_score"],
+        })
+        rows.append({
+            "team": row["away_team"],
+            "opponent": row["home_team"],
+            "home": 0,
+            "goals": row["away_score"],
+        })
+
+    df = pd.DataFrame(rows)
+
+    model = smf.glm(
+        "goals ~ home + C(team) + C(opponent)",
+        data=df,
+        family=sm.families.NegativeBinomial(),
+    ).fit()
+
+    base_mu = float(np.exp(model.params["Intercept"]))
+    home_adv = float(np.exp(model.params.get("home", 0.0)))
+
+    teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
+    strengths: dict[str, dict[str, float]] = {}
+    for t in teams:
+        atk_coef = model.params.get(f"C(team)[T.{t}]", 0.0)
+        def_coef = model.params.get(f"C(opponent)[T.{t}]", 0.0)
+        strengths[t] = {
+            "attack": float(np.exp(atk_coef)),
+            "defense": float(np.exp(def_coef)),
+        }
+
+    return strengths, base_mu, home_adv
+
+
 def estimate_elo_strengths(matches: pd.DataFrame, K: float = 20.0):
     """Estimate team strengths using an Elo ratings approach.
 
@@ -276,6 +322,8 @@ def simulate_chances(
 
     if rating_method == "poisson":
         strengths, avg_goals, home_adv = estimate_poisson_strengths(matches)
+    elif rating_method == "neg_binom":
+        strengths, avg_goals, home_adv = estimate_negative_binomial_strengths(matches)
     elif rating_method == "historic_ratio":
         strengths, avg_goals, home_adv = estimate_strengths_with_history(matches)
     elif rating_method == "elo":
