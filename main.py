@@ -8,6 +8,7 @@ from brasileirao import (
     parse_matches,
     simulate_chances,
     simulate_relegation_chances,
+    simulate_final_table,
     league_table,
 )
 
@@ -78,6 +79,16 @@ def main() -> None:
         leader_history_weight=args.leader_weight,
     )
 
+    table_proj = simulate_final_table(
+        matches,
+        iterations=args.simulations,
+        rating_method=args.rating,
+        rng=rng,
+        elo_k=args.elo_k,
+        leader_history_paths=args.leader_history_paths,
+        leader_history_weight=args.leader_weight,
+    )
+
     print("Title chances:")
     for team, prob in sorted(chances.items(), key=lambda x: x[1], reverse=True):
         print(f"{team:15s} {prob:.2%}")
@@ -85,6 +96,10 @@ def main() -> None:
     print("\nRelegation chances:")
     for team, prob in sorted(relegation.items(), key=lambda x: x[1], reverse=True):
         print(f"{team:15s} {prob:.2%}")
+
+    print("\nExpected final position and points:")
+    for _, row in table_proj.iterrows():
+        print(f"{row['team']:15s} {row['position']:5.1f} {row['points']:5.1f}")
 
 
 if __name__ == "__main__":

@@ -670,3 +670,103 @@ def simulate_relegation_chances(
     for t in relegated:
         relegated[t] = relegated[t] / iterations
     return relegated
+
+
+def simulate_final_table(
+    matches: pd.DataFrame,
+    iterations: int = 1000,
+    rating_method: str = "ratio",
+    rng: np.random.Generator | None = None,
+    elo_k: float = 20.0,
+    team_home_advantages: dict[str, float] | None = None,
+    leader_history_paths: list[str | Path] | None = None,
+    leader_history_weight: float = 0.5,
+) -> pd.DataFrame:
+    """Project final league positions and points for each team.
+
+    The parameters mirror :func:`simulate_chances`. The returned ``DataFrame``
+    contains the average finishing position and point total of each club,
+    sorted by expected position.
+    """
+
+    if rng is None:
+        rng = np.random.default_rng()
+
+    if team_home_advantages is None:
+        team_home_advantages = _estimate_team_home_advantages(matches)
+
+    dc_rho = 0.0
+    if rating_method == "poisson":
+        strengths, avg_goals, home_adv = estimate_poisson_strengths(matches)
+    elif rating_method == "neg_binom":
+        strengths, avg_goals, home_adv = estimate_negative_binomial_strengths(matches)
+    elif rating_method == "skellam":
+        strengths, avg_goals, home_adv = estimate_skellam_strengths(matches)
+    elif rating_method == "historic_ratio":
+        strengths, avg_goals, home_adv = estimate_strengths_with_history(matches)
+    elif rating_method == "elo":
+        strengths, avg_goals, home_adv = estimate_elo_strengths(matches, K=elo_k)
+    elif rating_method == "dixon_coles":
+        strengths, avg_goals, home_adv, dc_rho = estimate_dixon_coles_strengths(matches)
+    elif rating_method == "leader_history":
+        paths = leader_history_paths or ["data/Brasileirao2024A.txt"]
+        strengths, avg_goals, home_adv = estimate_leader_history_strengths(
+            matches, paths, weight=leader_history_weight
+        )
+    else:
+        strengths, avg_goals, home_adv = _estimate_strengths(matches)
+
+    teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
+    pos_totals = {t: 0.0 for t in teams}
+    points_totals = {t: 0.0 for t in teams}
+
+    played_df = matches.dropna(subset=["home_score", "away_score"])
+    remaining = matches[matches["home_score"].isna() | matches["away_score"].isna()]
+
+    for _ in range(iterations):
+        sims: list[dict] = []
+        for _, row in remaining.iterrows():
+            ht = row["home_team"]
+            at = row["away_team"]
+            factor = team_home_advantages.get(ht, 1.0)
+            mu_home = (
+                avg_goals
+                * strengths[ht]["attack"]
+                * strengths[at]["defense"]
+                * home_adv
+                * factor
+            )
+            mu_away = avg_goals * strengths[at]["attack"] * strengths[ht]["defense"]
+            if rating_method == "dixon_coles":
+                hs, as_ = _dixon_coles_sample(mu_home, mu_away, dc_rho, rng)
+            else:
+                hs = rng.poisson(mu_home)
+                as_ = rng.poisson(mu_away)
+            sims.append(
+                {
+                    "date": row["date"],
+                    "home_team": ht,
+                    "away_team": at,
+                    "home_score": hs,
+                    "away_score": as_,
+                }
+            )
+        all_matches = pd.concat([played_df, pd.DataFrame(sims)], ignore_index=True)
+        table = league_table(all_matches)
+        for idx, row in table.iterrows():
+            pos_totals[row["team"]] += idx + 1
+            points_totals[row["team"]] += row["points"]
+
+    results = []
+    for team in teams:
+        results.append(
+            {
+                "team": team,
+                "position": pos_totals[team] / iterations,
+                "points": points_totals[team] / iterations,
+            }
+        )
+
+    df = pd.DataFrame(results)
+    df = df.sort_values("position").reset_index(drop=True)
+    return df

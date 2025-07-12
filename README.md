@@ -27,6 +27,7 @@ strengths based on how often teams led past seasons; configure its behaviour
 with `--leader-history-paths` and `--leader-weight`.
 
 The script outputs the estimated chance of winning the title for each team. It then prints the probability of each side finishing in the bottom four and being relegated.
+It also estimates the average final position and points of every club.
 
 ## Project Layout
 
@@ -43,5 +44,6 @@ from brasileirao import (
     league_table,
     simulate_chances,
     simulate_relegation_chances,
+    simulate_final_table,
 )
 ```
