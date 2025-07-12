@@ -65,126 +65,126 @@ RulesEnd
 
 GamesBegin
 TeamListedFirst: home
-29/03/2025	Cruzeiro		Mirassol
-29/03/2025	Grêmio		Atlético Mineiro
-29/03/2025	Fortaleza		Fluminense
-29/03/2025	São Paulo		Sport
-29/03/2025	Juventude		Vitória
-29/03/2025	Flamengo		Internacional
-30/03/2025	Palmeiras		Botafogo
-30/03/2025	Vasco		Santos
-30/03/2025	Bahia		Corinthians
-31/03/2025	Red Bull Bragantino		Ceará
-05/04/2025	Ceará		Grêmio
-05/04/2025	Corinthians		Vasco
-05/04/2025	Botafogo		Juventude
-06/04/2025	Fluminense		Red Bull Bragantino
-06/04/2025	Atlético Mineiro		São Paulo
-06/04/2025	Internacional		Cruzeiro
-06/04/2025	Sport		Palmeiras
-06/04/2025	Mirassol		Fortaleza
-06/04/2025	Vitória		Flamengo
-06/04/2025	Santos		Bahia
-12/04/2025	Juventude		Ceará
-12/04/2025	Red Bull Bragantino		Botafogo
-12/04/2025	Palmeiras		Corinthians
-12/04/2025	Vasco		Sport
-13/04/2025	Bahia		Mirassol
-13/04/2025	São Paulo		Cruzeiro
-13/04/2025	Grêmio		Flamengo
-13/04/2025	Fluminense		Santos
-13/04/2025	Fortaleza		Internacional
-13/04/2025	Atlético Mineiro		Vitória
-15/04/2025	Ceará		Vasco
-16/04/2025	Botafogo		São Paulo
-16/04/2025	Sport		Red Bull Bragantino
-16/04/2025	Mirassol		Grêmio
-16/04/2025	Corinthians		Fluminense
-16/04/2025	Internacional		Palmeiras
-16/04/2025	Vitória		Fortaleza
-16/04/2025	Flamengo		Juventude
-16/04/2025	Santos		Atlético Mineiro
-17/04/2025	Cruzeiro		Bahia
-19/04/2025	Corinthians		Sport
-19/04/2025	Vasco		Flamengo
-19/04/2025	Grêmio		Internacional
-20/04/2025	Juventude		Mirassol
-20/04/2025	São Paulo		Santos
-20/04/2025	Atlético Mineiro		Botafogo
-20/04/2025	Fluminense		Vitória
-20/04/2025	Fortaleza		Palmeiras
-20/04/2025	Red Bull Bragantino		Cruzeiro
-21/04/2025	Bahia		Ceará
-26/04/2025	Internacional		Juventude
-26/04/2025	Ceará		São Paulo
-26/04/2025	Mirassol		Atlético Mineiro
-26/04/2025	Sport		Fortaleza
-26/04/2025	Botafogo		Fluminense
-27/04/2025	Flamengo		Corinthians
-27/04/2025	Vitória		Grêmio
-27/04/2025	Cruzeiro		Vasco
-27/04/2025	Palmeiras		Bahia
-27/04/2025	Santos		Red Bull Bragantino
-02/05/2025	São Paulo		Fortaleza
-03/05/2025	Corinthians		Internacional
-03/05/2025	Ceará		Vitória
-03/05/2025	Fluminense		Sport
-03/05/2025	Bahia		Botafogo
-04/05/2025	Grêmio		Santos
-04/05/2025	Vasco		Palmeiras
-04/05/2025	Cruzeiro		Flamengo
-05/05/2025	Red Bull Bragantino		Mirassol
-05/05/2025	Juventude		Atlético Mineiro
-10/05/2025	Fortaleza		Juventude
-10/05/2025	Mirassol		Corinthians
-10/05/2025	Grêmio		Red Bull Bragantino
-10/05/2025	Vitória		Vasco
-10/05/2025	Flamengo		Bahia
-11/05/2025	Sport		Cruzeiro
-11/05/2025	Palmeiras		São Paulo
-11/05/2025	Atlético Mineiro		Fluminense
-11/05/2025	Botafogo		Internacional
-12/05/2025	Santos		Ceará
-17/05/2025	Ceará		Sport
-17/05/2025	Vasco		Fortaleza
-17/05/2025	São Paulo		Grêmio
-18/05/2025	Juventude		Fluminense
-18/05/2025	Corinthians		Santos
-18/05/2025	Bahia		Vitória
-18/05/2025	Red Bull Bragantino		Palmeiras
-18/05/2025	Flamengo		Botafogo
-18/05/2025	Cruzeiro		Atlético Mineiro
-18/05/2025	Internacional		Mirassol
-24/05/2025	São Paulo		Mirassol
-24/05/2025	Fluminense		Vasco
-24/05/2025	Atlético Mineiro		Corinthians
-25/05/2025	Grêmio		Bahia
-25/05/2025	Palmeiras		Flamengo
-25/05/2025	Sport		Internacional
-25/05/2025	Vitória		Santos
-25/05/2025	Fortaleza		Cruzeiro
-26/05/2025	Red Bull Bragantino		Juventude
-31/05/2025	Bahia		São Paulo
-31/05/2025	Vasco		Red Bull Bragantino
-01/06/2025	Mirassol		Sport
-01/06/2025	Santos		Botafogo
-01/06/2025	Juventude		Grêmio
-01/06/2025	Ceará		Atlético Mineiro
-01/06/2025	Flamengo		Fortaleza
-01/06/2025	Corinthians		Vitória
-01/06/2025	Cruzeiro		Palmeiras
-01/06/2025	Internacional		Fluminense
-04/06/2025	Botafogo		Ceará
+29/03/2025	Cruzeiro	2-1	Mirassol
+29/03/2025	Grêmio	2-1	Atlético Mineiro
+29/03/2025	Fortaleza	2-0	Fluminense
+29/03/2025	São Paulo	0-0	Sport
+29/03/2025	Juventude	2-0	Vitória
+29/03/2025	Flamengo	1-1	Internacional
+30/03/2025	Palmeiras	0-0	Botafogo
+30/03/2025	Vasco	2-1	Santos
+30/03/2025	Bahia	1-1	Corinthians
+31/03/2025	Red Bull Bragantino	2-2	Ceará
+05/04/2025	Ceará	2-0	Grêmio
+05/04/2025	Corinthians	3-0	Vasco
+05/04/2025	Botafogo	2-0	Juventude
+06/04/2025	Fluminense	2-1	Red Bull Bragantino
+06/04/2025	Atlético Mineiro	0-0	São Paulo
+06/04/2025	Internacional	3-0	Cruzeiro
+06/04/2025	Sport	1-2	Palmeiras
+06/04/2025	Mirassol	1-1	Fortaleza
+06/04/2025	Vitória	1-2	Flamengo
+06/04/2025	Santos	2-2	Bahia
+12/04/2025	Juventude	2-1	Ceará
+12/04/2025	Red Bull Bragantino	1-0	Botafogo
+12/04/2025	Palmeiras	2-0	Corinthians
+12/04/2025	Vasco	3-1	Sport
+13/04/2025	Bahia	1-1	Mirassol
+13/04/2025	São Paulo	1-1	Cruzeiro
+13/04/2025	Grêmio	0-2	Flamengo
+13/04/2025	Fluminense	1-0	Santos
+13/04/2025	Fortaleza	0-0	Internacional
+13/04/2025	Atlético Mineiro	2-2	Vitória
+15/04/2025	Ceará	2-1	Vasco
+16/04/2025	Botafogo	2-2	São Paulo
+16/04/2025	Sport	0-1	Red Bull Bragantino
+16/04/2025	Mirassol	4-1	Grêmio
+16/04/2025	Corinthians	0-2	Fluminense
+16/04/2025	Internacional	0-1	Palmeiras
+16/04/2025	Vitória	2-1	Fortaleza
+16/04/2025	Flamengo	6-0	Juventude
+16/04/2025	Santos	2-0	Atlético Mineiro
+17/04/2025	Cruzeiro	3-0	Bahia
+19/04/2025	Corinthians	2-1	Sport
+19/04/2025	Vasco	0-0	Flamengo
+19/04/2025	Grêmio	1-1	Internacional
+20/04/2025	Juventude	2-2	Mirassol
+20/04/2025	São Paulo	2-1	Santos
+20/04/2025	Atlético Mineiro	1-0	Botafogo
+20/04/2025	Fluminense	1-1	Vitória
+20/04/2025	Fortaleza	1-2	Palmeiras
+20/04/2025	Red Bull Bragantino	1-0	Cruzeiro
+21/04/2025	Bahia	1-0	Ceará
+26/04/2025	Internacional	3-1	Juventude
+26/04/2025	Ceará	1-1	São Paulo
+26/04/2025	Mirassol	2-2	Atlético Mineiro
+26/04/2025	Sport	0-0	Fortaleza
+26/04/2025	Botafogo	2-0	Fluminense
+27/04/2025	Flamengo	4-0	Corinthians
+27/04/2025	Vitória	1-1	Grêmio
+27/04/2025	Cruzeiro	1-0	Vasco
+27/04/2025	Palmeiras	0-1	Bahia
+27/04/2025	Santos	1-2	Red Bull Bragantino
+02/05/2025	São Paulo	0-0	Fortaleza
+03/05/2025	Corinthians	4-2	Internacional
+03/05/2025	Ceará	1-0	Vitória
+03/05/2025	Fluminense	2-1	Sport
+03/05/2025	Bahia	1-0	Botafogo
+04/05/2025	Grêmio	1-0	Santos
+04/05/2025	Vasco	0-1	Palmeiras
+04/05/2025	Cruzeiro	2-1	Flamengo
+05/05/2025	Red Bull Bragantino	1-0	Mirassol
+05/05/2025	Juventude	0-1	Atlético Mineiro
+10/05/2025	Fortaleza	5-0	Juventude
+10/05/2025	Mirassol	2-1	Corinthians
+10/05/2025	Grêmio	1-1	Red Bull Bragantino
+10/05/2025	Vitória	2-1	Vasco
+10/05/2025	Flamengo	1-0	Bahia
+11/05/2025	Sport	0-4	Cruzeiro
+11/05/2025	Palmeiras	1-0	São Paulo
+11/05/2025	Atlético Mineiro	3-2	Fluminense
+11/05/2025	Botafogo	4-0	Internacional
+12/05/2025	Santos	0-0	Ceará
+17/05/2025	Ceará	2-0	Sport
+17/05/2025	Vasco	3-0	Fortaleza
+17/05/2025	São Paulo	2-1	Grêmio
+18/05/2025	Juventude	1-1	Fluminense
+18/05/2025	Corinthians	1-0	Santos
+18/05/2025	Bahia	2-1	Vitória
+18/05/2025	Red Bull Bragantino	1-2	Palmeiras
+18/05/2025	Flamengo	0-0	Botafogo
+18/05/2025	Cruzeiro	0-0	Atlético Mineiro
+18/05/2025	Internacional	1-1	Mirassol
+24/05/2025	São Paulo	0-2	Mirassol
+24/05/2025	Fluminense	2-1	Vasco
+24/05/2025	Atlético Mineiro	0-0	Corinthians
+25/05/2025	Grêmio	1-0	Bahia
+25/05/2025	Palmeiras	0-2	Flamengo
+25/05/2025	Sport	1-1	Internacional
+25/05/2025	Vitória	0-1	Santos
+25/05/2025	Fortaleza	0-2	Cruzeiro
+26/05/2025	Red Bull Bragantino	1-0	Juventude
+31/05/2025	Bahia	2-1	São Paulo
+31/05/2025	Vasco	0-2	Red Bull Bragantino
+01/06/2025	Mirassol	1-0	Sport
+01/06/2025	Santos	0-1	Botafogo
+01/06/2025	Juventude	0-2	Grêmio
+01/06/2025	Ceará	0-1	Atlético Mineiro
+01/06/2025	Flamengo	5-0	Fortaleza
+01/06/2025	Corinthians	0-0	Vitória
+01/06/2025	Cruzeiro	2-1	Palmeiras
+01/06/2025	Internacional	0-2	Fluminense
+04/06/2025	Botafogo	3-2	Ceará
 10/06/2025	Palmeiras		Juventude
 10/06/2025	Botafogo		Mirassol
 10/06/2025	Sport		Flamengo
 10/06/2025	Fluminense		Ceará
-12/06/2025	Red Bull Bragantino		Bahia
-12/06/2025	Vitória		Cruzeiro
-12/06/2025	Fortaleza		Santos
-12/06/2025	Grêmio		Corinthians
-12/06/2025	Atlético Mineiro		Internacional
-12/06/2025	São Paulo		Vasco
+12/06/2025	Red Bull Bragantino	0-3	Bahia
+12/06/2025	Vitória	0-0	Cruzeiro
+12/06/2025	Fortaleza	2-3	Santos
+12/06/2025	Grêmio	1-1	Corinthians
+12/06/2025	Atlético Mineiro	2-0	Internacional
+12/06/2025	São Paulo	1-3	Vasco
 12/07/2025	Internacional		Vitória
 12/07/2025	Flamengo		São Paulo
 12/07/2025	Vasco		Botafogo
