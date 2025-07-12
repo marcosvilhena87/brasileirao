@@ -7,9 +7,12 @@ This project provides a simple simulator for the 2025 Brasileirão Série A seas
 Install dependencies and run the simulator:
 
 ```bash
-pip install pandas numpy
-python main.py --simulations 1000
+pip install pandas numpy statsmodels
+python main.py --simulations 1000 --rating poisson
 ```
+
+The `--rating` option accepts `ratio` (default) or `poisson` to choose how team
+strengths are estimated.
 
 The script outputs the estimated chance of winning the title for each team.
 
