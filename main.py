@@ -4,7 +4,12 @@ import sys
 import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
-from brasileirao import parse_matches, simulate_chances, league_table
+from brasileirao import (
+    parse_matches,
+    simulate_chances,
+    simulate_relegation_chances,
+    league_table,
+)
 
 
 def main() -> None:
@@ -63,8 +68,22 @@ def main() -> None:
         leader_history_weight=args.leader_weight,
     )
 
+    relegation = simulate_relegation_chances(
+        matches,
+        iterations=args.simulations,
+        rating_method=args.rating,
+        rng=rng,
+        elo_k=args.elo_k,
+        leader_history_paths=args.leader_history_paths,
+        leader_history_weight=args.leader_weight,
+    )
+
     print("Title chances:")
     for team, prob in sorted(chances.items(), key=lambda x: x[1], reverse=True):
+        print(f"{team:15s} {prob:.2%}")
+
+    print("\nRelegation chances:")
+    for team, prob in sorted(relegation.items(), key=lambda x: x[1], reverse=True):
         print(f"{team:15s} {prob:.2%}")
 
 
