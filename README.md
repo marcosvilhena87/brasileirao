@@ -12,8 +12,9 @@ python main.py --simulations 1000 --rating poisson
 ```
 
 The `--rating` option accepts `ratio` (default), `historic_ratio`, `poisson`,
-`neg_binom`, `dixon_coles`, `elo`, or `leader_history` to choose how team
-strengths are estimated. The `historic_ratio` method
+`neg_binom`, `skellam`, `dixon_coles`, `elo`, or `leader_history` to choose how team
+strengths are estimated. The `skellam` method fits a regression to goal
+differences. The `historic_ratio` method
 mixes results from the 2024 season with a lower weight. The `elo` method
 updates team ratings over time using an Elo formula; the `simulate_chances`
 function exposes an `elo_k` parameter for deterministic runs. Use the

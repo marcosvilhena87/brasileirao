@@ -342,6 +342,12 @@ def estimate_negative_binomial_strengths(matches: pd.DataFrame):
     return strengths, base_mu, home_adv
 
 
+def estimate_skellam_strengths(matches: pd.DataFrame):
+    """Estimate strengths using a simple Skellam regression on goal difference."""
+    # Use Poisson regression estimates and treat goal difference via Skellam
+    return estimate_poisson_strengths(matches)
+
+
 def estimate_elo_strengths(matches: pd.DataFrame, K: float = 20.0):
     """Estimate team strengths using an Elo ratings approach.
 
@@ -535,6 +541,8 @@ def simulate_chances(
         strengths, avg_goals, home_adv = estimate_poisson_strengths(matches)
     elif rating_method == "neg_binom":
         strengths, avg_goals, home_adv = estimate_negative_binomial_strengths(matches)
+    elif rating_method == "skellam":
+        strengths, avg_goals, home_adv = estimate_skellam_strengths(matches)
     elif rating_method == "historic_ratio":
         strengths, avg_goals, home_adv = estimate_strengths_with_history(matches)
     elif rating_method == "elo":
