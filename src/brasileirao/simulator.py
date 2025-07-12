@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import re
 from pathlib import Path
+from scipy.optimize import minimize
+from scipy.stats import poisson
 
 
 def _parse_date(date_str: str) -> pd.Timestamp:
@@ -320,6 +322,97 @@ def estimate_elo_strengths(matches: pd.DataFrame, K: float = 20.0):
     return strengths, avg_goals, home_adv
 
 
+def estimate_dixon_coles_strengths(matches: pd.DataFrame):
+    """Estimate team strengths using the Dixon-Coles model."""
+    played = matches.dropna(subset=["home_score", "away_score"])
+
+    teams = pd.unique(played[["home_team", "away_team"]].values.ravel())
+    team_index = {t: i for i, t in enumerate(teams)}
+    n = len(teams)
+
+    def _nll(params: np.ndarray) -> float:
+        attack = np.zeros(n)
+        defense = np.zeros(n)
+        attack[1:] = params[: n - 1]
+        defense[1:] = params[n - 1 : 2 * (n - 1)]
+        home_param = params[-2]
+        rho = params[-1]
+
+        ll = 0.0
+        for _, row in played.iterrows():
+            i = team_index[row["home_team"]]
+            j = team_index[row["away_team"]]
+            lam = np.exp(attack[i] + defense[j] + home_param)
+            mu = np.exp(attack[j] + defense[i])
+            x = int(row["home_score"])
+            y = int(row["away_score"])
+            tau = 1.0
+            if x == 0 and y == 0:
+                tau = 1 - lam * mu * rho
+            elif x == 0 and y == 1:
+                tau = 1 + lam * rho
+            elif x == 1 and y == 0:
+                tau = 1 + mu * rho
+            elif x == 1 and y == 1:
+                tau = 1 - rho
+            ll += poisson.logpmf(x, lam) + poisson.logpmf(y, mu) + np.log(tau)
+        return -float(ll)
+
+    res = minimize(_nll, np.zeros(2 * (n - 1) + 2), method="L-BFGS-B")
+    params = res.x
+
+    attack = np.zeros(n)
+    defense = np.zeros(n)
+    attack[1:] = params[: n - 1]
+    defense[1:] = params[n - 1 : 2 * (n - 1)]
+    attack -= np.mean(attack)
+    defense -= np.mean(defense)
+
+    home_adv = float(np.exp(params[-2]))
+    rho = float(params[-1])
+
+    strengths: dict[str, dict[str, float]] = {}
+    for t, idx in team_index.items():
+        strengths[t] = {
+            "attack": float(np.exp(attack[idx])),
+            "defense": float(np.exp(defense[idx])),
+        }
+
+    total_goals = played["home_score"].sum() + played["away_score"].sum()
+    total_games = len(played)
+    avg_goals = total_goals / total_games if total_games else 2.5
+
+    return strengths, avg_goals, home_adv, rho
+
+
+def _dixon_coles_sample(
+    lam: float, mu: float, rho: float, rng: np.random.Generator, max_goals: int = 6
+) -> tuple[int, int]:
+    """Sample a scoreline using the Dixon-Coles adjustment."""
+    probs = np.zeros((max_goals + 1, max_goals + 1))
+    for i in range(max_goals + 1):
+        for j in range(max_goals + 1):
+            tau = 1.0
+            if i == 0 and j == 0:
+                tau = 1 - lam * mu * rho
+            elif i == 0 and j == 1:
+                tau = 1 + lam * rho
+            elif i == 1 and j == 0:
+                tau = 1 + mu * rho
+            elif i == 1 and j == 1:
+                tau = 1 - rho
+            tau = max(tau, 0.0)
+            probs[i, j] = poisson.pmf(i, lam) * poisson.pmf(j, mu) * tau
+    total = probs.sum()
+    if total <= 0:
+        hs = rng.poisson(lam)
+        as_ = rng.poisson(mu)
+        return int(hs), int(as_)
+    probs = probs / total
+    flat = rng.choice((max_goals + 1) ** 2, p=probs.ravel())
+    return int(flat // (max_goals + 1)), int(flat % (max_goals + 1))
+
+
 def simulate_chances(
     matches: pd.DataFrame,
     iterations: int = 1000,
@@ -352,6 +445,7 @@ def simulate_chances(
     if team_home_advantages is None:
         team_home_advantages = _estimate_team_home_advantages(matches)
 
+    dc_rho = 0.0
     if rating_method == "poisson":
         strengths, avg_goals, home_adv = estimate_poisson_strengths(matches)
     elif rating_method == "neg_binom":
@@ -360,6 +454,8 @@ def simulate_chances(
         strengths, avg_goals, home_adv = estimate_strengths_with_history(matches)
     elif rating_method == "elo":
         strengths, avg_goals, home_adv = estimate_elo_strengths(matches, K=elo_k)
+    elif rating_method == "dixon_coles":
+        strengths, avg_goals, home_adv, dc_rho = estimate_dixon_coles_strengths(matches)
     else:
         strengths, avg_goals, home_adv = _estimate_strengths(matches)
     teams = pd.unique(matches[['home_team', 'away_team']].values.ravel())
@@ -376,8 +472,11 @@ def simulate_chances(
             factor = team_home_advantages.get(ht, 1.0)
             mu_home = avg_goals * strengths[ht]['attack'] * strengths[at]['defense'] * home_adv * factor
             mu_away = avg_goals * strengths[at]['attack'] * strengths[ht]['defense']
-            hs = rng.poisson(mu_home)
-            as_ = rng.poisson(mu_away)
+            if rating_method == "dixon_coles":
+                hs, as_ = _dixon_coles_sample(mu_home, mu_away, dc_rho, rng)
+            else:
+                hs = rng.poisson(mu_home)
+                as_ = rng.poisson(mu_away)
             sims.append({'date': row['date'], 'home_team': ht, 'away_team': at, 'home_score': hs, 'away_score': as_})
         all_matches = pd.concat([played_df, pd.DataFrame(sims)], ignore_index=True)
         table = league_table(all_matches)

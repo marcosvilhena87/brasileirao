@@ -169,3 +169,23 @@ def test_team_home_advantage_changes_results():
         team_home_advantages={"Bahia": 2.0},
     )
     assert base != custom
+
+
+def test_simulate_chances_dixon_coles_seed_repeatability():
+    df = parse_matches("data/Brasileirao2025A.txt")
+    rng = np.random.default_rng(123)
+    chances1 = simulate_chances(
+        df,
+        iterations=5,
+        rating_method="dixon_coles",
+        rng=rng,
+    )
+    rng = np.random.default_rng(123)
+    chances2 = simulate_chances(
+        df,
+        iterations=5,
+        rating_method="dixon_coles",
+        rng=rng,
+    )
+    assert chances1 == chances2
+    assert abs(sum(chances1.values()) - 1.0) < 1e-6
