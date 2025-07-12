@@ -100,6 +100,22 @@ def league_table(matches: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def compute_leader_stats(matches: pd.DataFrame) -> dict[str, int]:
+    """Return how often each team led the table as the season progressed."""
+    teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
+    leader_counts = {t: 0 for t in teams}
+
+    played_rows: list[dict] = []
+    for _, row in matches.sort_values("date").iterrows():
+        if pd.isna(row["home_score"]) or pd.isna(row["away_score"]):
+            continue
+        played_rows.append(row.to_dict())
+        table = league_table(pd.DataFrame(played_rows))
+        leader_counts[table.iloc[0]["team"]] += 1
+
+    return leader_counts
+
+
 def _estimate_strengths(matches: pd.DataFrame):
     played = matches.dropna(subset=['home_score', 'away_score'])
     total_goals = played['home_score'].sum() + played['away_score'].sum()
@@ -166,6 +182,37 @@ def estimate_strengths_with_history(
         past_matches = past_matches.sample(frac=past_weight, random_state=0).reset_index(drop=True)
     combined = pd.concat([current_matches, past_matches], ignore_index=True)
     return _estimate_strengths(combined)
+
+
+def estimate_leader_history_strengths(
+    current_matches: pd.DataFrame | None = None,
+    past_paths: list[str | Path] | str | Path = "data/Brasileirao2024A.txt",
+    weight: float = 0.5,
+) -> tuple[dict[str, dict[str, float]], float, float]:
+    """Estimate strengths influenced by historical league leaders."""
+    if current_matches is None:
+        current_matches = parse_matches("data/Brasileirao2025A.txt")
+    strengths, avg_goals, home_adv = _estimate_strengths(current_matches)
+
+    if isinstance(past_paths, (str, Path)):
+        past_paths = [past_paths]
+
+    leader_counts: dict[str, int] = {t: 0 for t in strengths}
+    for p in past_paths:
+        past_matches = parse_matches(p)
+        counts = compute_leader_stats(past_matches)
+        for team, val in counts.items():
+            leader_counts[team] = leader_counts.get(team, 0) + val
+
+    if leader_counts:
+        max_count = max(leader_counts.values()) or 1
+        for team in strengths:
+            factor = leader_counts.get(team, 0) / max_count
+            mult = 1.0 + weight * factor
+            strengths[team]["attack"] *= mult
+            strengths[team]["defense"] /= mult
+
+    return strengths, avg_goals, home_adv
 
 
 def estimate_poisson_strengths(matches: pd.DataFrame):
@@ -420,6 +467,8 @@ def simulate_chances(
     rng: np.random.Generator | None = None,
     elo_k: float = 20.0,
     team_home_advantages: dict[str, float] | None = None,
+    leader_history_paths: list[str | Path] | None = None,
+    leader_history_weight: float = 0.5,
 ) -> dict[str, float]:
     """Simulate remaining fixtures and return title probabilities.
 
@@ -438,6 +487,11 @@ def simulate_chances(
     team_home_advantages : dict[str, float] | None, optional
         Multiplicative home advantage factor for each team. When ``None``,
         factors are estimated from played matches.
+    leader_history_paths : list[str | Path] | None, optional
+        Season files used when ``rating_method`` is ``"leader_history"``.
+    leader_history_weight : float, optional
+        Influence of historic leader counts when ``rating_method`` is
+        ``"leader_history"``.
     """
     if rng is None:
         rng = np.random.default_rng()
@@ -456,6 +510,11 @@ def simulate_chances(
         strengths, avg_goals, home_adv = estimate_elo_strengths(matches, K=elo_k)
     elif rating_method == "dixon_coles":
         strengths, avg_goals, home_adv, dc_rho = estimate_dixon_coles_strengths(matches)
+    elif rating_method == "leader_history":
+        paths = leader_history_paths or ["data/Brasileirao2024A.txt"]
+        strengths, avg_goals, home_adv = estimate_leader_history_strengths(
+            matches, paths, weight=leader_history_weight
+        )
     else:
         strengths, avg_goals, home_adv = _estimate_strengths(matches)
     teams = pd.unique(matches[['home_team', 'away_team']].values.ravel())

@@ -189,3 +189,58 @@ def test_simulate_chances_dixon_coles_seed_repeatability():
     )
     assert chances1 == chances2
     assert abs(sum(chances1.values()) - 1.0) < 1e-6
+
+
+def test_compute_leader_stats():
+    data = [
+        {
+            "date": "2025-01-01",
+            "home_team": "Alpha",
+            "away_team": "Beta",
+            "home_score": 1,
+            "away_score": 0,
+        },
+        {
+            "date": "2025-01-02",
+            "home_team": "Alpha",
+            "away_team": "Gamma",
+            "home_score": 0,
+            "away_score": 1,
+        },
+        {
+            "date": "2025-01-03",
+            "home_team": "Beta",
+            "away_team": "Gamma",
+            "home_score": 2,
+            "away_score": 0,
+        },
+    ]
+    df = pd.DataFrame(data)
+    counts = simulator.compute_leader_stats(df)
+    assert counts["Alpha"] == 1
+    assert counts["Beta"] == 1
+    assert counts["Gamma"] == 1
+
+
+def test_simulate_chances_leader_history_seed_repeatability():
+    df = parse_matches("data/Brasileirao2025A.txt")
+    rng = np.random.default_rng(55)
+    chances1 = simulate_chances(
+        df,
+        iterations=5,
+        rating_method="leader_history",
+        rng=rng,
+        leader_history_paths=["data/Brasileirao2024A.txt"],
+        leader_history_weight=0.5,
+    )
+    rng = np.random.default_rng(55)
+    chances2 = simulate_chances(
+        df,
+        iterations=5,
+        rating_method="leader_history",
+        rng=rng,
+        leader_history_paths=["data/Brasileirao2024A.txt"],
+        leader_history_weight=0.5,
+    )
+    assert chances1 == chances2
+    assert abs(sum(chances1.values()) - 1.0) < 1e-6

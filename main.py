@@ -14,7 +14,14 @@ def main() -> None:
     parser.add_argument(
         "--rating",
         default="ratio",
-        choices=["ratio", "historic_ratio", "poisson", "neg_binom", "elo"],
+        choices=[
+            "ratio",
+            "historic_ratio",
+            "poisson",
+            "neg_binom",
+            "elo",
+            "leader_history",
+        ],
         help="team strength estimation method (use 'historic_ratio' to include past season)",
     )
     parser.add_argument(
@@ -29,6 +36,18 @@ def main() -> None:
         default=20.0,
         help="Elo K factor when using the 'elo' rating method",
     )
+    parser.add_argument(
+        "--leader-history-paths",
+        nargs="*",
+        default=["data/Brasileirao2024A.txt"],
+        help="Past season files for leader_history rating method",
+    )
+    parser.add_argument(
+        "--leader-weight",
+        type=float,
+        default=0.5,
+        help="Weight for leader_history influence",
+    )
     args = parser.parse_args()
 
     matches = parse_matches(args.file)
@@ -39,6 +58,8 @@ def main() -> None:
         rating_method=args.rating,
         rng=rng,
         elo_k=args.elo_k,
+        leader_history_paths=args.leader_history_paths,
+        leader_history_weight=args.leader_weight,
     )
 
     print("Title chances:")
