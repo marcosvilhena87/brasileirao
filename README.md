@@ -23,3 +23,9 @@ The script outputs the estimated chance of winning the title for each team.
 - `src/brasileirao/simulator.py` – parsing, table calculation and simulation routines.
 - `main.py` – command-line interface to run the simulation.
 - `tests/` – basic unit tests.
+
+The main functions can be imported directly from the package:
+
+```python
+from brasileirao import parse_matches, league_table, simulate_chances
+```

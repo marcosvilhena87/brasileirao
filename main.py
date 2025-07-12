@@ -1,6 +1,10 @@
 import argparse
+import os
+import sys
 import numpy as np
-from src.brasileirao.simulator import parse_matches, simulate_chances, league_table
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
+from brasileirao import parse_matches, simulate_chances, league_table
 
 
 def main() -> None:
