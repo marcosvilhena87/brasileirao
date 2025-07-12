@@ -26,7 +26,7 @@ LeagueBegin
   Country: Brazil
   State: 
   Level: A
-  Season: 2024 (current: True)
+  Season: 2024 (current: False)
   Author: mva87
   Note: 
   LotteryNote: 
