@@ -11,8 +11,9 @@ pip install pandas numpy statsmodels
 python main.py --simulations 1000 --rating poisson
 ```
 
-The `--rating` option accepts `ratio` (default) or `poisson` to choose how team
-strengths are estimated. Use the `--seed` option to set a random seed and
+The `--rating` option accepts `ratio` (default), `historic_ratio`, or `poisson`
+to choose how team strengths are estimated. The `historic_ratio` method mixes
+results from the 2024 season with a lower weight. Use the `--seed` option to set a random seed and
 reproduce a specific simulation.
 
 The script outputs the estimated chance of winning the title for each team.

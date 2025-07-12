@@ -126,6 +126,21 @@ def _estimate_strengths(matches: pd.DataFrame):
     return strengths, avg_goals, home_adv
 
 
+def estimate_strengths_with_history(
+    current_matches: pd.DataFrame | None = None,
+    past_path: str | Path = "data/Brasileirao2024A.txt",
+    past_weight: float = 0.5,
+) -> tuple[dict[str, dict[str, float]], float, float]:
+    """Estimate strengths using current season matches and weighted history."""
+    if current_matches is None:
+        current_matches = parse_matches("data/Brasileirao2025A.txt")
+    past_matches = parse_matches(past_path)
+    if 0 < past_weight < 1:
+        past_matches = past_matches.sample(frac=past_weight, random_state=0).reset_index(drop=True)
+    combined = pd.concat([current_matches, past_matches], ignore_index=True)
+    return _estimate_strengths(combined)
+
+
 def estimate_poisson_strengths(matches: pd.DataFrame):
     """Fit a Poisson regression model to estimate team strengths."""
     import statsmodels.api as sm
@@ -200,6 +215,8 @@ def simulate_chances(
 
     if rating_method == "poisson":
         strengths, avg_goals, home_adv = estimate_poisson_strengths(matches)
+    elif rating_method == "historic_ratio":
+        strengths, avg_goals, home_adv = estimate_strengths_with_history(matches)
     else:
         strengths, avg_goals, home_adv = _estimate_strengths(matches)
     teams = pd.unique(matches[['home_team', 'away_team']].values.ravel())
