@@ -21,3 +21,9 @@ def test_simulate_chances():
     df = simulator.parse_matches('data/Brasileirao2025A.txt')
     chances = simulator.simulate_chances(df, iterations=10)
     assert abs(sum(chances.values()) - 1.0) < 1e-6
+
+
+def test_simulate_chances_poisson():
+    df = simulator.parse_matches('data/Brasileirao2025A.txt')
+    chances = simulator.simulate_chances(df, iterations=10, rating_method="poisson")
+    assert abs(sum(chances.values()) - 1.0) < 1e-6
