@@ -180,8 +180,24 @@ def simulate_chances(
     matches: pd.DataFrame,
     iterations: int = 1000,
     rating_method: str = "ratio",
+    rng: np.random.Generator | None = None,
 ) -> dict[str, float]:
-    """Simulate remaining fixtures and return title probabilities."""
+    """Simulate remaining fixtures and return title probabilities.
+
+    Parameters
+    ----------
+    matches : pd.DataFrame
+        DataFrame containing all fixtures. Played games must have scores.
+    iterations : int, default 1000
+        Number of simulation runs.
+    rating_method : str, default "ratio"
+        Method used to estimate team strengths.
+    rng : np.random.Generator | None, optional
+        Random number generator to use. A new generator is created when ``None``.
+    """
+    if rng is None:
+        rng = np.random.default_rng()
+
     if rating_method == "poisson":
         strengths, avg_goals, home_adv = estimate_poisson_strengths(matches)
     else:
@@ -199,8 +215,8 @@ def simulate_chances(
             at = row['away_team']
             mu_home = avg_goals * strengths[ht]['attack'] * strengths[at]['defense'] * home_adv
             mu_away = avg_goals * strengths[at]['attack'] * strengths[ht]['defense']
-            hs = np.random.poisson(mu_home)
-            as_ = np.random.poisson(mu_away)
+            hs = rng.poisson(mu_home)
+            as_ = rng.poisson(mu_away)
             sims.append({'date': row['date'], 'home_team': ht, 'away_team': at, 'home_score': hs, 'away_score': as_})
         all_matches = pd.concat([played_df, pd.DataFrame(sims)], ignore_index=True)
         table = league_table(all_matches)
