@@ -283,3 +283,18 @@ def test_simulate_chances_leader_history_seed_repeatability():
     )
     assert chances1 == chances2
     assert abs(sum(chances1.values()) - 1.0) < 1e-6
+
+
+def test_simulate_relegation_chances():
+    df = parse_matches("data/Brasileirao2025A.txt")
+    probs = simulator.simulate_relegation_chances(df, iterations=10)
+    assert abs(sum(probs.values()) - 4.0) < 1e-6
+
+
+def test_simulate_relegation_chances_seed_repeatability():
+    df = parse_matches("data/Brasileirao2025A.txt")
+    rng = np.random.default_rng(123)
+    first = simulator.simulate_relegation_chances(df, iterations=5, rng=rng)
+    rng = np.random.default_rng(123)
+    second = simulator.simulate_relegation_chances(df, iterations=5, rng=rng)
+    assert first == second

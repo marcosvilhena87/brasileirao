@@ -1,6 +1,6 @@
 # Brasileirão Simulator
 
-This project provides a simple simulator for the 2025 Brasileirão Série A season. It parses the fixtures provided in `data/Brasileirao2025A.txt`, builds a league table from played matches, and simulates the remaining games many times to estimate title probabilities.
+This project provides a simple simulator for the 2025 Brasileirão Série A season. It parses the fixtures provided in `data/Brasileirao2025A.txt`, builds a league table from played matches, and simulates the remaining games many times to estimate title and relegation probabilities.
 
 ## Usage
 
@@ -26,7 +26,7 @@ argument of `simulate_chances`. The `leader_history` rating method adjusts
 strengths based on how often teams led past seasons; configure its behaviour
 with `--leader-history-paths` and `--leader-weight`.
 
-The script outputs the estimated chance of winning the title for each team.
+The script outputs the estimated chance of winning the title for each team. It then prints the probability of each side finishing in the bottom four and being relegated.
 
 ## Project Layout
 
@@ -38,5 +38,10 @@ The script outputs the estimated chance of winning the title for each team.
 The main functions can be imported directly from the package:
 
 ```python
-from brasileirao import parse_matches, league_table, simulate_chances
+from brasileirao import (
+    parse_matches,
+    league_table,
+    simulate_chances,
+    simulate_relegation_chances,
+)
 ```
