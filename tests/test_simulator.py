@@ -50,3 +50,16 @@ def test_estimate_strengths():
 
     # all estimated attack and defense values must be positive
     assert all(v["attack"] > 0 and v["defense"] > 0 for v in strengths.values())
+
+
+def test_estimate_strengths_with_history():
+    df = parse_matches('data/Brasileirao2025A.txt')
+    strengths, _, _ = simulator.estimate_strengths_with_history(df)
+    teams = pd.unique(df[["home_team", "away_team"]].values.ravel())
+    assert set(teams).issubset(set(strengths.keys()))
+
+
+def test_simulate_chances_historic_ratio():
+    df = parse_matches('data/Brasileirao2025A.txt')
+    chances = simulate_chances(df, iterations=10, rating_method="historic_ratio")
+    assert abs(sum(chances.values()) - 1.0) < 1e-6

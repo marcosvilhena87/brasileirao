@@ -14,8 +14,8 @@ def main() -> None:
     parser.add_argument(
         "--rating",
         default="ratio",
-        choices=["ratio", "poisson"],
-        help="team strength estimation method",
+        choices=["ratio", "historic_ratio", "poisson"],
+        help="team strength estimation method (use 'historic_ratio' to include past season)",
     )
     parser.add_argument(
         "--seed",
