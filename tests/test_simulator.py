@@ -1,5 +1,6 @@
 import sys, os; sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 import pandas as pd
+import numpy as np
 from brasileirao import simulator
 
 
@@ -27,3 +28,12 @@ def test_simulate_chances_poisson():
     df = simulator.parse_matches('data/Brasileirao2025A.txt')
     chances = simulator.simulate_chances(df, iterations=10, rating_method="poisson")
     assert abs(sum(chances.values()) - 1.0) < 1e-6
+
+
+def test_simulate_chances_seed_repeatability():
+    df = simulator.parse_matches('data/Brasileirao2025A.txt')
+    rng = np.random.default_rng(1234)
+    chances1 = simulator.simulate_chances(df, iterations=5, rng=rng)
+    rng = np.random.default_rng(1234)
+    chances2 = simulator.simulate_chances(df, iterations=5, rng=rng)
+    assert chances1 == chances2

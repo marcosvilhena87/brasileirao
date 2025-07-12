@@ -1,4 +1,5 @@
 import argparse
+import numpy as np
 from src.brasileirao.simulator import parse_matches, simulate_chances, league_table
 
 
@@ -12,11 +13,21 @@ def main() -> None:
         choices=["ratio", "poisson"],
         help="team strength estimation method",
     )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="random seed for repeatable simulations",
+    )
     args = parser.parse_args()
 
     matches = parse_matches(args.file)
+    rng = np.random.default_rng(args.seed) if args.seed is not None else None
     chances = simulate_chances(
-        matches, iterations=args.simulations, rating_method=args.rating
+        matches,
+        iterations=args.simulations,
+        rating_method=args.rating,
+        rng=rng,
     )
 
     print("Title chances:")
