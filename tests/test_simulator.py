@@ -222,6 +222,25 @@ def test_compute_leader_stats():
     assert counts["Gamma"] == 1
 
 
+def _slow_leader_stats(df: pd.DataFrame) -> dict:
+    """Naive reference implementation using league_table."""
+    teams = pd.unique(df[["home_team", "away_team"]].values.ravel())
+    counts = {t: 0 for t in teams}
+    played: list[dict] = []
+    for _, row in df.sort_values("date").iterrows():
+        if pd.isna(row["home_score"]) or pd.isna(row["away_score"]):
+            continue
+        played.append(row.to_dict())
+        table = simulator.league_table(pd.DataFrame(played))
+        counts[table.iloc[0]["team"]] += 1
+    return counts
+
+
+def test_compute_leader_stats_equivalence():
+    df = parse_matches("data/Brasileirao2025A.txt")
+    assert simulator.compute_leader_stats(df) == _slow_leader_stats(df)
+
+
 def test_simulate_chances_leader_history_seed_repeatability():
     df = parse_matches("data/Brasileirao2025A.txt")
     rng = np.random.default_rng(55)
