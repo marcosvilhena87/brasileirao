@@ -37,3 +37,15 @@ def test_simulate_chances_seed_repeatability():
     rng = np.random.default_rng(1234)
     chances2 = simulator.simulate_chances(df, iterations=5, rng=rng)
     assert chances1 == chances2
+
+
+def test_estimate_strengths():
+    df = simulator.parse_matches('data/Brasileirao2025A.txt')
+    strengths, _, _ = simulator._estimate_strengths(df)
+    teams = pd.unique(df[["home_team", "away_team"]].values.ravel())
+
+    # every team from the matches should appear in the strengths dict
+    assert set(teams) == set(strengths.keys())
+
+    # all estimated attack and defense values must be positive
+    assert all(v["attack"] > 0 and v["defense"] > 0 for v in strengths.values())
