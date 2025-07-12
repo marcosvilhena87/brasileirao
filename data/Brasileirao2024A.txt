@@ -1,25 +1,25 @@
 LeagueBegin
   League: Campeonato Brasileiro - Serie A (Serie A)       (ID: brasileiro) (Sort: Div) (Playoffs: 1)
-    Team: Club Athletico Paranaense       (Athletico-PR)  
-    Team: Atletico Clube Goianiense       (Atletico-GO)   
-    Team: Clube Atletico Mineiro          (Atletico-MG)   
-    Team: Esporte Clube Bahia             (Bahia)         
-    Team: Botafogo de Futebol e Regatas   (Botafogo)      
-    Team: Red Bull Bragantino             (Bragantino)    
-    Team: Sport Club Corinthians Paulista (Corinthians)   
-    Team: Criciuma Esporte Clube          (Criciuma)      
-    Team: Cruzeiro Esporte Clube          (Cruzeiro)      
-    Team: Cuiaba Esporte Clube            (Cuiaba)        
-    Team: Clube de Regatas do Flamengo    (Flamengo)      
-    Team: Fluminense Football Club        (Fluminense)    
-    Team: Fortaleza Esporte Clube         (Fortaleza)     
-    Team: Gremio Football Porto Alegrense (Gremio)        
-    Team: Sport Club Internacional        (Internacional) 
-    Team: Esporte Clube Juventude         (Juventude)     
-    Team: Sociedade Esportiva Palmeiras   (Palmeiras)     
-    Team: Sao Paulo Futebol Clube         (Sao Paulo)     
-    Team: Club de Regatas Vasco da Gama   (Vasco)         
-    Team: Esporte Clube Vitoria           (Vitoria)       
+    Team: Club Athletico Paranaense       (Athletico-PR)
+    Team: Atletico Clube Goianiense       (Atletico-GO)
+    Team: Clube Atletico Mineiro          (Atletico-MG)
+    Team: Esporte Clube Bahia             (Bahia)
+    Team: Botafogo de Futebol e Regatas   (Botafogo)
+    Team: Red Bull Bragantino             (Bragantino)
+    Team: Sport Club Corinthians Paulista (Corinthians)
+    Team: Criciuma Esporte Clube          (Criciuma)
+    Team: Cruzeiro Esporte Clube          (Cruzeiro)
+    Team: Cuiaba Esporte Clube            (Cuiaba)
+    Team: Clube de Regatas do Flamengo    (Flamengo)
+    Team: Fluminense Football Club        (Fluminense)
+    Team: Fortaleza Esporte Clube         (Fortaleza)
+    Team: Gremio Football Porto Alegrense (Gremio)
+    Team: Sport Club Internacional        (Internacional)
+    Team: Esporte Clube Juventude         (Juventude)
+    Team: Sociedade Esportiva Palmeiras   (Palmeiras)
+    Team: Sao Paulo Futebol Clube         (Sao Paulo)
+    Team: Club de Regatas Vasco da Gama   (Vasco)
+    Team: Esporte Clube Vitoria           (Vitoria)
   Kind: pro
   Sport: soccer
   Gender: male
@@ -33,8 +33,7 @@ LeagueBegin
 LeagueEnd
 
 SortBegin
-Div: Points, Wins, GoalsDelta, GoalsFor, Points HeadToHead, GoalsFor
-HeadToHead Away, DrawLots
+Div: Points, Wins, GoalsDelta, GoalsFor, Points HeadToHead, GoalsFor HeadToHead Away, DrawLots
 SortEnd
 
 RulesBegin
