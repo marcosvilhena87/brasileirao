@@ -298,3 +298,14 @@ def test_simulate_relegation_chances_seed_repeatability():
     rng = np.random.default_rng(123)
     second = simulator.simulate_relegation_chances(df, iterations=5, rng=rng)
     assert first == second
+
+
+def test_simulate_final_table_deterministic():
+    df = parse_matches("data/Brasileirao2025A.txt")
+    rng = np.random.default_rng(1)
+    table1 = simulator.simulate_final_table(df, iterations=5, rng=rng)
+    rng = np.random.default_rng(1)
+    table2 = simulator.simulate_final_table(df, iterations=5, rng=rng)
+    pd.testing.assert_frame_equal(table1, table2)
+    assert {"team", "position", "points"}.issubset(table1.columns)
+    assert len(table1) == len(pd.unique(df[["home_team", "away_team"]].values.ravel()))
