@@ -191,11 +191,70 @@ def estimate_poisson_strengths(matches: pd.DataFrame):
     return strengths, base_mu, home_adv
 
 
+def estimate_elo_strengths(matches: pd.DataFrame, K: float = 20.0):
+    """Estimate team strengths using an Elo ratings approach.
+
+    Parameters
+    ----------
+    matches : pd.DataFrame
+        Fixture list including results for played games.
+    K : float, default 20.0
+        Rating update factor.
+
+    Returns
+    -------
+    dict[str, dict[str, float]]
+        Attack and defense multipliers derived from final Elo ratings.
+    float
+        Average goals per game of played matches.
+    float
+        Ratio of home to away goals.
+    """
+
+    played = matches.dropna(subset=["home_score", "away_score"]).copy()
+    played = played.sort_values("date")
+
+    teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
+    ratings = {t: 1500.0 for t in teams}
+
+    for _, row in played.iterrows():
+        home = row["home_team"]
+        away = row["away_team"]
+        hs = int(row["home_score"])
+        as_ = int(row["away_score"])
+
+        r_home = ratings[home]
+        r_away = ratings[away]
+        expected_home = 1 / (1 + 10 ** ((r_away - r_home) / 400))
+        score_home = 1.0 if hs > as_ else 0.5 if hs == as_ else 0.0
+
+        ratings[home] = r_home + K * (score_home - expected_home)
+        ratings[away] = r_away + K * ((1 - score_home) - (1 - expected_home))
+
+    baseline = float(np.mean(list(ratings.values())))
+    strengths: dict[str, dict[str, float]] = {}
+    for t, r in ratings.items():
+        factor = 10 ** ((r - baseline) / 400)
+        strengths[t] = {"attack": factor, "defense": 1 / factor}
+
+    total_goals = played["home_score"].sum() + played["away_score"].sum()
+    total_games = len(played)
+    avg_goals = total_goals / total_games if total_games else 2.5
+    home_adv = (
+        played["home_score"].sum() / played["away_score"].sum()
+        if played["away_score"].sum()
+        else 1.0
+    )
+
+    return strengths, avg_goals, home_adv
+
+
 def simulate_chances(
     matches: pd.DataFrame,
     iterations: int = 1000,
     rating_method: str = "ratio",
     rng: np.random.Generator | None = None,
+    elo_k: float = 20.0,
 ) -> dict[str, float]:
     """Simulate remaining fixtures and return title probabilities.
 
@@ -209,6 +268,8 @@ def simulate_chances(
         Method used to estimate team strengths.
     rng : np.random.Generator | None, optional
         Random number generator to use. A new generator is created when ``None``.
+    elo_k : float, default 20.0
+        K factor when ``rating_method`` is ``"elo"``.
     """
     if rng is None:
         rng = np.random.default_rng()
@@ -217,6 +278,8 @@ def simulate_chances(
         strengths, avg_goals, home_adv = estimate_poisson_strengths(matches)
     elif rating_method == "historic_ratio":
         strengths, avg_goals, home_adv = estimate_strengths_with_history(matches)
+    elif rating_method == "elo":
+        strengths, avg_goals, home_adv = estimate_elo_strengths(matches, K=elo_k)
     else:
         strengths, avg_goals, home_adv = _estimate_strengths(matches)
     teams = pd.unique(matches[['home_team', 'away_team']].values.ravel())
