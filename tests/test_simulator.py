@@ -63,3 +63,25 @@ def test_simulate_chances_historic_ratio():
     df = parse_matches('data/Brasileirao2025A.txt')
     chances = simulate_chances(df, iterations=10, rating_method="historic_ratio")
     assert abs(sum(chances.values()) - 1.0) < 1e-6
+
+
+def test_simulate_chances_elo_seed_repeatability():
+    df = parse_matches('data/Brasileirao2025A.txt')
+    rng = np.random.default_rng(42)
+    chances1 = simulate_chances(
+        df,
+        iterations=5,
+        rating_method="elo",
+        rng=rng,
+        elo_k=15.0,
+    )
+    rng = np.random.default_rng(42)
+    chances2 = simulate_chances(
+        df,
+        iterations=5,
+        rating_method="elo",
+        rng=rng,
+        elo_k=15.0,
+    )
+    assert chances1 == chances2
+    assert abs(sum(chances1.values()) - 1.0) < 1e-6

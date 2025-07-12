@@ -14,7 +14,7 @@ def main() -> None:
     parser.add_argument(
         "--rating",
         default="ratio",
-        choices=["ratio", "historic_ratio", "poisson"],
+        choices=["ratio", "historic_ratio", "poisson", "elo"],
         help="team strength estimation method (use 'historic_ratio' to include past season)",
     )
     parser.add_argument(
