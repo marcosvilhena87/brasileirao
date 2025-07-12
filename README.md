@@ -1,6 +1,6 @@
 # Brasileirão Simulator
 
-This project provides a simple simulator for the 2024 Brasileirão Série A season. It parses the fixtures provided in `data/Brasileirao2024A.txt`, builds a league table from played matches, and simulates the remaining games many times to estimate title probabilities.
+This project provides a simple simulator for the 2025 Brasileirão Série A season. It parses the fixtures provided in `data/Brasileirao2025A.txt`, builds a league table from played matches, and simulates the remaining games many times to estimate title probabilities.
 
 ## Usage
 

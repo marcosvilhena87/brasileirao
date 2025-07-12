@@ -3,8 +3,8 @@ from src.brasileirao.simulator import parse_matches, simulate_chances, league_ta
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Simulate Brasileirão 2024 title odds")
-    parser.add_argument("--file", default="data/Brasileirao2024A.txt", help="fixture file path")
+    parser = argparse.ArgumentParser(description="Simulate Brasileirão 2025 title odds")
+    parser.add_argument("--file", default="data/Brasileirao2025A.txt", help="fixture file path")
     parser.add_argument("--simulations", type=int, default=1000, help="number of simulation runs")
     args = parser.parse_args()
 
