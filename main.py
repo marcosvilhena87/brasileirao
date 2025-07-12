@@ -9,6 +9,7 @@ from brasileirao import (
     simulate_chances,
     simulate_relegation_chances,
     simulate_final_table,
+    summary_table,
     league_table,
 )
 
@@ -100,6 +101,19 @@ def main() -> None:
     print("\nExpected final position and points:")
     for _, row in table_proj.iterrows():
         print(f"{row['team']:15s} {row['position']:5.1f} {row['points']:5.1f}")
+
+    summary = table_proj.copy()
+    summary["title"] = summary["team"].map(chances)
+    summary["relegation"] = summary["team"].map(relegation)
+    summary = summary.sort_values("position").reset_index(drop=True)
+    summary["position"] = range(1, len(summary) + 1)
+    summary["points"] = summary["points"].round().astype(int)
+
+    print("\nPos  Team            Points  Title   Relegation")
+    for _, row in summary.iterrows():
+        print(
+            f"{row['position']:2d}   {row['team']:15s} {row['points']:6d} {row['title']:.2%} {row['relegation']:.2%}"
+        )
 
 
 if __name__ == "__main__":
