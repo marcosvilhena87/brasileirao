@@ -1,71 +1,7 @@
-LeagueBegin
-  League: Campeonato Brasileiro - Serie A (Serie A)       (ID: brasileiro) (Sort: Div) (Playoffs: 1)
-    Team: Clube Atletico Mineiro          (Atletico-MG)
-    Team: Esporte Clube Bahia             (Bahia)   
-    Team: Botafogo de Futebol e Regatas   (Botafogo)
-    Team: Red Bull Bragantino             (Bragantino)
-    Team: Ceara Sporting Club             (Ceara)
-    Team: Sport Club Corinthians Paulista (Corinthians)
-    Team: Cruzeiro Esporte Clube          (Cruzeiro)
-    Team: Clube de Regatas do Flamengo    (Flamengo)
-    Team: Fluminense Football Club        (Fluminense)
-    Team: Fortaleza Esporte Clube         (Fortaleza)
-    Team: Gremio Football Porto Alegrense (Gremio)
-    Team: Sport Club Internacional        (Internacional)
-    Team: Esporte Clube Juventude         (Juventude)
-    Team: Mirassol Futebol Clube          (Mirassol)
-    Team: Sociedade Esportiva Palmeiras   (Palmeiras)
-    Team: Santos Futebol Clube            (Santos)
-    Team: Sport Club do Recife            (Sport)
-    Team: Sao Paulo Futebol Clube         (Sao Paulo)
-    Team: Club de Regatas Vasco da Gama   (Vasco)
-    Team: Esporte Clube Vitoria           (Vitoria)
-  Kind: pro
-  Sport: soccer
-  Gender: male
-  Country: Brazil
-  State: 
-  Level: A
-  Season: 2025 (current: True)
-  Author: mva87
-  Note: 
-  LotteryNote: 
-LeagueEnd
-
-SortBegin
-Div: Points, Wins, GoalsDelta, GoalsFor, Points HeadToHead, GoalsFor HeadToHead Away, DrawLots
-SortEnd
-
-RulesBegin
-  PointsForWinInRegulation:  3
-  PointsForWinInOvertime:  3
-  PointsForWinInShootout:  3
-  PointsForLossInRegulation:  0
-  PointsForLossInOvertime:  0
-  PointsForLossInShootout:  0
-  PointsForTie:  1
-  PercentOfGamesThatEndInTie:  0.242105263
-  PercentOfGamesThatEndInOvertimeWin:  0
-  PercentOfGamesThatEndInShootoutWin:  0
-  HomeFieldAdvantage:  0.518421053
-  WeightType:  PercentOfPointsWon
-  WeightExponent:  0
-  WhatDoYouCallATie:  draw
-  WhatDoYouCallLottery:  lottery
-  WhatDoYouCallPromoted:  Libertadores
-  Promote:  4
-  PromotePlus:  2
-  PromotePlusPercent:  1
-  WhatDoYouCallDemoted:  Serie B
-  Demote:  4
-  DemotePlus:  0
-  DemotePlusPercent:  0
-RulesEnd
-
 GamesBegin
 TeamListedFirst: home
 29/03/2025	Cruzeiro	2-1	Mirassol
-29/03/2025	Gremio	2-1	Atletico Mineiro
+29/03/2025	Gremio	2-1	Atletico-MG
 29/03/2025	Fortaleza	2-0	Fluminense
 29/03/2025	Sao Paulo	0-0	Sport
 29/03/2025	Juventude	2-0	Vitoria
@@ -73,19 +9,19 @@ TeamListedFirst: home
 30/03/2025	Palmeiras	0-0	Botafogo
 30/03/2025	Vasco	2-1	Santos
 30/03/2025	Bahia	1-1	Corinthians
-31/03/2025	Red Bull Bragantino	2-2	Ceara
+31/03/2025	Bragantino	2-2	Ceara
 05/04/2025	Ceara	2-0	Gremio
 05/04/2025	Corinthians	3-0	Vasco
 05/04/2025	Botafogo	2-0	Juventude
-06/04/2025	Fluminense	2-1	Red Bull Bragantino
-06/04/2025	Atletico Mineiro	0-0	Sao Paulo
+06/04/2025	Fluminense	2-1	Bragantino
+06/04/2025	Atletico-MG	0-0	Sao Paulo
 06/04/2025	Internacional	3-0	Cruzeiro
 06/04/2025	Sport	1-2	Palmeiras
 06/04/2025	Mirassol	1-1	Fortaleza
 06/04/2025	Vitoria	1-2	Flamengo
 06/04/2025	Santos	2-2	Bahia
 12/04/2025	Juventude	2-1	Ceara
-12/04/2025	Red Bull Bragantino	1-0	Botafogo
+12/04/2025	Bragantino	1-0	Botafogo
 12/04/2025	Palmeiras	2-0	Corinthians
 12/04/2025	Vasco	3-1	Sport
 13/04/2025	Bahia	1-1	Mirassol
@@ -93,37 +29,37 @@ TeamListedFirst: home
 13/04/2025	Gremio	0-2	Flamengo
 13/04/2025	Fluminense	1-0	Santos
 13/04/2025	Fortaleza	0-0	Internacional
-13/04/2025	Atletico Mineiro	2-2	Vitoria
+13/04/2025	Atletico-MG	2-2	Vitoria
 15/04/2025	Ceara	2-1	Vasco
 16/04/2025	Botafogo	2-2	Sao Paulo
-16/04/2025	Sport	0-1	Red Bull Bragantino
+16/04/2025	Sport	0-1	Bragantino
 16/04/2025	Mirassol	4-1	Gremio
 16/04/2025	Corinthians	0-2	Fluminense
 16/04/2025	Internacional	0-1	Palmeiras
 16/04/2025	Vitoria	2-1	Fortaleza
 16/04/2025	Flamengo	6-0	Juventude
-16/04/2025	Santos	2-0	Atletico Mineiro
+16/04/2025	Santos	2-0	Atletico-MG
 17/04/2025	Cruzeiro	3-0	Bahia
 19/04/2025	Corinthians	2-1	Sport
 19/04/2025	Vasco	0-0	Flamengo
 19/04/2025	Gremio	1-1	Internacional
 20/04/2025	Juventude	2-2	Mirassol
 20/04/2025	Sao Paulo	2-1	Santos
-20/04/2025	Atletico Mineiro	1-0	Botafogo
+20/04/2025	Atletico-MG	1-0	Botafogo
 20/04/2025	Fluminense	1-1	Vitoria
 20/04/2025	Fortaleza	1-2	Palmeiras
-20/04/2025	Red Bull Bragantino	1-0	Cruzeiro
+20/04/2025	Bragantino	1-0	Cruzeiro
 21/04/2025	Bahia	1-0	Ceara
 26/04/2025	Internacional	3-1	Juventude
 26/04/2025	Ceara	1-1	Sao Paulo
-26/04/2025	Mirassol	2-2	Atletico Mineiro
+26/04/2025	Mirassol	2-2	Atletico-MG
 26/04/2025	Sport	0-0	Fortaleza
 26/04/2025	Botafogo	2-0	Fluminense
 27/04/2025	Flamengo	4-0	Corinthians
 27/04/2025	Vitoria	1-1	Gremio
 27/04/2025	Cruzeiro	1-0	Vasco
 27/04/2025	Palmeiras	0-1	Bahia
-27/04/2025	Santos	1-2	Red Bull Bragantino
+27/04/2025	Santos	1-2	Bragantino
 02/05/2025	Sao Paulo	0-0	Fortaleza
 03/05/2025	Corinthians	4-2	Internacional
 03/05/2025	Ceara	1-0	Vitoria
@@ -132,16 +68,16 @@ TeamListedFirst: home
 04/05/2025	Gremio	1-0	Santos
 04/05/2025	Vasco	0-1	Palmeiras
 04/05/2025	Cruzeiro	2-1	Flamengo
-05/05/2025	Red Bull Bragantino	1-0	Mirassol
-05/05/2025	Juventude	0-1	Atletico Mineiro
+05/05/2025	Bragantino	1-0	Mirassol
+05/05/2025	Juventude	0-1	Atletico-MG
 10/05/2025	Fortaleza	5-0	Juventude
 10/05/2025	Mirassol	2-1	Corinthians
-10/05/2025	Gremio	1-1	Red Bull Bragantino
+10/05/2025	Gremio	1-1	Bragantino
 10/05/2025	Vitoria	2-1	Vasco
 10/05/2025	Flamengo	1-0	Bahia
 11/05/2025	Sport	0-4	Cruzeiro
 11/05/2025	Palmeiras	1-0	Sao Paulo
-11/05/2025	Atletico Mineiro	3-2	Fluminense
+11/05/2025	Atletico-MG	3-2	Fluminense
 11/05/2025	Botafogo	4-0	Internacional
 12/05/2025	Santos	0-0	Ceara
 17/05/2025	Ceara	2-0	Sport
@@ -150,25 +86,25 @@ TeamListedFirst: home
 18/05/2025	Juventude	1-1	Fluminense
 18/05/2025	Corinthians	1-0	Santos
 18/05/2025	Bahia	2-1	Vitoria
-18/05/2025	Red Bull Bragantino	1-2	Palmeiras
+18/05/2025	Bragantino	1-2	Palmeiras
 18/05/2025	Flamengo	0-0	Botafogo
-18/05/2025	Cruzeiro	0-0	Atletico Mineiro
+18/05/2025	Cruzeiro	0-0	Atletico-MG
 18/05/2025	Internacional	1-1	Mirassol
 24/05/2025	Sao Paulo	0-2	Mirassol
 24/05/2025	Fluminense	2-1	Vasco
-24/05/2025	Atletico Mineiro	0-0	Corinthians
+24/05/2025	Atletico-MG	0-0	Corinthians
 25/05/2025	Gremio	1-0	Bahia
 25/05/2025	Palmeiras	0-2	Flamengo
 25/05/2025	Sport	1-1	Internacional
 25/05/2025	Vitoria	0-1	Santos
 25/05/2025	Fortaleza	0-2	Cruzeiro
-26/05/2025	Red Bull Bragantino	1-0	Juventude
+26/05/2025	Bragantino	1-0	Juventude
 31/05/2025	Bahia	2-1	Sao Paulo
-31/05/2025	Vasco	0-2	Red Bull Bragantino
+31/05/2025	Vasco	0-2	Bragantino
 01/06/2025	Mirassol	1-0	Sport
 01/06/2025	Santos	0-1	Botafogo
 01/06/2025	Juventude	0-2	Gremio
-01/06/2025	Ceara	0-1	Atletico Mineiro
+01/06/2025	Ceara	0-1	Atletico-MG
 01/06/2025	Flamengo	5-0	Fortaleza
 01/06/2025	Corinthians	0-0	Vitoria
 01/06/2025	Cruzeiro	2-1	Palmeiras
@@ -178,31 +114,31 @@ TeamListedFirst: home
 10/06/2025	Botafogo		Mirassol
 10/06/2025	Sport		Flamengo
 10/06/2025	Fluminense		Ceara
-12/06/2025	Red Bull Bragantino	0-3	Bahia
+12/06/2025	Bragantino	0-3	Bahia
 12/06/2025	Vitoria	0-0	Cruzeiro
 12/06/2025	Fortaleza	2-3	Santos
 12/06/2025	Gremio	1-1	Corinthians
-12/06/2025	Atletico Mineiro	2-0	Internacional
+12/06/2025	Atletico-MG	2-0	Internacional
 12/06/2025	Sao Paulo	1-3	Vasco
 12/07/2025	Internacional		Vitoria
 12/07/2025	Flamengo		Sao Paulo
 12/07/2025	Vasco		Botafogo
-12/07/2025	Bahia		Atletico Mineiro
+12/07/2025	Bahia		Atletico-MG
 13/07/2025	Mirassol		Fluminense
 13/07/2025	Santos		Palmeiras
-13/07/2025	Corinthians		Red Bull Bragantino
+13/07/2025	Corinthians		Bragantino
 13/07/2025	Cruzeiro		Gremio
 13/07/2025	Fortaleza		Ceara
 14/07/2025	Juventude		Sport
 16/07/2025	Bahia		Internacional
 16/07/2025	Juventude		Vasco
 16/07/2025	Gremio		Fortaleza
-16/07/2025	Atletico Mineiro		Sport
+16/07/2025	Atletico-MG		Sport
 16/07/2025	Palmeiras		Mirassol
 16/07/2025	Ceara		Corinthians
 16/07/2025	Santos		Flamengo
 16/07/2025	Botafogo		Vitoria
-16/07/2025	Red Bull Bragantino		Sao Paulo
+16/07/2025	Bragantino		Sao Paulo
 17/07/2025	Fluminense		Cruzeiro
 19/07/2025	Fortaleza		Bahia
 19/07/2025	Vasco		Gremio
@@ -210,21 +146,21 @@ TeamListedFirst: home
 19/07/2025	Sao Paulo		Corinthians
 20/07/2025	Internacional		Ceara
 20/07/2025	Cruzeiro		Juventude
-20/07/2025	Vitoria		Red Bull Bragantino
+20/07/2025	Vitoria		Bragantino
 20/07/2025	Sport		Botafogo
-20/07/2025	Palmeiras		Atletico Mineiro
+20/07/2025	Palmeiras		Atletico-MG
 20/07/2025	Flamengo		Fluminense
 23/07/2025	Gremio		Botafogo
-23/07/2025	Atletico Mineiro		Fortaleza
+23/07/2025	Atletico-MG		Fortaleza
 23/07/2025	Vasco		Bahia
 23/07/2025	Ceara		Mirassol
 23/07/2025	Fluminense		Palmeiras
 23/07/2025	Corinthians		Cruzeiro
 23/07/2025	Vitoria		Sport
-23/07/2025	Red Bull Bragantino		Flamengo
+23/07/2025	Bragantino		Flamengo
 23/07/2025	Santos		Internacional
 24/07/2025	Juventude		Sao Paulo
-26/07/2025	Fortaleza		Red Bull Bragantino
+26/07/2025	Fortaleza		Bragantino
 26/07/2025	Mirassol		Vitoria
 26/07/2025	Sport		Santos
 26/07/2025	Botafogo		Corinthians
@@ -233,13 +169,13 @@ TeamListedFirst: home
 27/07/2025	Sao Paulo		Fluminense
 27/07/2025	Bahia		Juventude
 27/07/2025	Internacional		Vasco
-27/07/2025	Flamengo		Atletico Mineiro
+27/07/2025	Flamengo		Atletico-MG
 02/08/2025	Sport		Bahia
 02/08/2025	Mirassol		Vasco
 02/08/2025	Fluminense		Gremio
 03/08/2025	Corinthians		Fortaleza
 03/08/2025	Botafogo		Cruzeiro
-03/08/2025	Atletico Mineiro		Red Bull Bragantino
+03/08/2025	Atletico-MG		Bragantino
 03/08/2025	Ceara		Flamengo
 03/08/2025	Vitoria		Palmeiras
 03/08/2025	Internacional		Sao Paulo
@@ -252,12 +188,12 @@ TeamListedFirst: home
 10/08/2025	Bahia		Fluminense
 10/08/2025	Flamengo		Mirassol
 10/08/2025	Palmeiras		Ceara
-10/08/2025	Vasco		Atletico Mineiro
-10/08/2025	Red Bull Bragantino		Internacional
+10/08/2025	Vasco		Atletico-MG
+10/08/2025	Bragantino		Internacional
 17/08/2025	Internacional		Flamengo
-17/08/2025	Ceara		Red Bull Bragantino
+17/08/2025	Ceara		Bragantino
 17/08/2025	Sport		Sao Paulo
-17/08/2025	Atletico Mineiro		Gremio
+17/08/2025	Atletico-MG		Gremio
 17/08/2025	Vitoria		Juventude
 17/08/2025	Fluminense		Fortaleza
 17/08/2025	Mirassol		Cruzeiro
@@ -267,15 +203,15 @@ TeamListedFirst: home
 24/08/2025	Gremio		Ceara
 24/08/2025	Bahia		Santos
 24/08/2025	Cruzeiro		Internacional
-24/08/2025	Red Bull Bragantino		Fluminense
+24/08/2025	Bragantino		Fluminense
 24/08/2025	Fortaleza		Mirassol
 24/08/2025	Juventude		Botafogo
 24/08/2025	Flamengo		Vitoria
 24/08/2025	Vasco		Corinthians
 24/08/2025	Palmeiras		Sport
-24/08/2025	Sao Paulo		Atletico Mineiro
-31/08/2025	Botafogo		Red Bull Bragantino
-31/08/2025	Vitoria		Atletico Mineiro
+24/08/2025	Sao Paulo		Atletico-MG
+31/08/2025	Botafogo		Bragantino
+31/08/2025	Vitoria		Atletico-MG
 31/08/2025	Ceara		Juventude
 31/08/2025	Sport		Vasco
 31/08/2025	Internacional		Fortaleza
@@ -289,14 +225,14 @@ TeamListedFirst: home
 14/09/2025	Fortaleza		Vitoria
 14/09/2025	Juventude		Flamengo
 14/09/2025	Gremio		Mirassol
-14/09/2025	Atletico Mineiro		Santos
+14/09/2025	Atletico-MG		Santos
 14/09/2025	Palmeiras		Internacional
 14/09/2025	Sao Paulo		Botafogo
-14/09/2025	Red Bull Bragantino		Sport
+14/09/2025	Bragantino		Sport
 14/09/2025	Fluminense		Corinthians
-21/09/2025	Cruzeiro		Red Bull Bragantino
+21/09/2025	Cruzeiro		Bragantino
 21/09/2025	Palmeiras		Fortaleza
-21/09/2025	Botafogo		Atletico Mineiro
+21/09/2025	Botafogo		Atletico-MG
 21/09/2025	Flamengo		Vasco
 21/09/2025	Santos		Sao Paulo
 21/09/2025	Mirassol		Juventude
@@ -304,11 +240,11 @@ TeamListedFirst: home
 21/09/2025	Vitoria		Fluminense
 21/09/2025	Internacional		Gremio
 21/09/2025	Sport		Corinthians
-28/09/2025	Atletico Mineiro		Mirassol
+28/09/2025	Atletico-MG		Mirassol
 28/09/2025	Gremio		Vitoria
 28/09/2025	Bahia		Palmeiras
 28/09/2025	Fortaleza		Sport
-28/09/2025	Red Bull Bragantino		Santos
+28/09/2025	Bragantino		Santos
 28/09/2025	Sao Paulo		Ceara
 28/09/2025	Fluminense		Botafogo
 28/09/2025	Vasco		Cruzeiro
@@ -318,8 +254,8 @@ TeamListedFirst: home
 01/10/2025	Internacional		Corinthians
 01/10/2025	Vitoria		Ceara
 01/10/2025	Fortaleza		Sao Paulo
-01/10/2025	Atletico Mineiro		Juventude
-01/10/2025	Mirassol		Red Bull Bragantino
+01/10/2025	Atletico-MG		Juventude
+01/10/2025	Mirassol		Bragantino
 01/10/2025	Botafogo		Bahia
 01/10/2025	Palmeiras		Vasco
 01/10/2025	Santos		Gremio
@@ -328,36 +264,36 @@ TeamListedFirst: home
 16/10/2025	Internacional		Botafogo
 16/10/2025	Bahia		Flamengo
 16/10/2025	Ceara		Santos
-16/10/2025	Red Bull Bragantino		Gremio
+16/10/2025	Bragantino		Gremio
 16/10/2025	Juventude		Fortaleza
-16/10/2025	Fluminense		Atletico Mineiro
+16/10/2025	Fluminense		Atletico-MG
 16/10/2025	Sao Paulo		Palmeiras
 16/10/2025	Vasco		Vitoria
 16/10/2025	Corinthians		Mirassol
 26/10/2025	Gremio		Sao Paulo
-26/10/2025	Atletico Mineiro		Cruzeiro
+26/10/2025	Atletico-MG		Cruzeiro
 26/10/2025	Fortaleza		Vasco
 26/10/2025	Mirassol		Internacional
 26/10/2025	Vitoria		Bahia
 26/10/2025	Botafogo		Flamengo
 26/10/2025	Sport		Ceara
 26/10/2025	Fluminense		Juventude
-26/10/2025	Palmeiras		Red Bull Bragantino
+26/10/2025	Palmeiras		Bragantino
 26/10/2025	Santos		Corinthians
 05/11/2025	Flamengo		Palmeiras
 05/11/2025	Internacional		Sport
 05/11/2025	Bahia		Gremio
 05/11/2025	Ceara		Botafogo
 05/11/2025	Cruzeiro		Fortaleza
-05/11/2025	Juventude		Red Bull Bragantino
+05/11/2025	Juventude		Bragantino
 05/11/2025	Vasco		Fluminense
 05/11/2025	Mirassol		Sao Paulo
-05/11/2025	Corinthians		Atletico Mineiro
+05/11/2025	Corinthians		Atletico-MG
 05/11/2025	Santos		Vitoria
 19/11/2025	Gremio		Juventude
-19/11/2025	Atletico Mineiro		Ceara
+19/11/2025	Atletico-MG		Ceara
 19/11/2025	Fortaleza		Flamengo
-19/11/2025	Red Bull Bragantino		Vasco
+19/11/2025	Bragantino		Vasco
 19/11/2025	Vitoria		Corinthians
 19/11/2025	Botafogo		Santos
 19/11/2025	Sport		Mirassol
@@ -365,19 +301,19 @@ TeamListedFirst: home
 19/11/2025	Palmeiras		Cruzeiro
 19/11/2025	Sao Paulo		Bahia
 23/11/2025	Cruzeiro		Vitoria
-23/11/2025	Bahia		Red Bull Bragantino
+23/11/2025	Bahia		Bragantino
 23/11/2025	Ceara		Fluminense
 23/11/2025	Juventude		Palmeiras
 23/11/2025	Mirassol		Botafogo
-23/11/2025	Internacional		Atletico Mineiro
+23/11/2025	Internacional		Atletico-MG
 23/11/2025	Santos		Fortaleza
 23/11/2025	Vasco		Sao Paulo
 23/11/2025	Flamengo		Sport
 23/11/2025	Corinthians		Gremio
-30/11/2025	Atletico Mineiro		Bahia
+30/11/2025	Atletico-MG		Bahia
 30/11/2025	Gremio		Cruzeiro
 30/11/2025	Ceara		Fortaleza
-30/11/2025	Red Bull Bragantino		Corinthians
+30/11/2025	Bragantino		Corinthians
 30/11/2025	Vitoria		Internacional
 30/11/2025	Sport		Juventude
 30/11/2025	Sao Paulo		Flamengo
@@ -386,27 +322,27 @@ TeamListedFirst: home
 30/11/2025	Palmeiras		Santos
 03/12/2025	Cruzeiro		Fluminense
 03/12/2025	Vitoria		Botafogo
-03/12/2025	Sport		Atletico Mineiro
+03/12/2025	Sport		Atletico-MG
 03/12/2025	Mirassol		Palmeiras
 03/12/2025	Fortaleza		Gremio
 03/12/2025	Internacional		Bahia
 03/12/2025	Flamengo		Santos
-03/12/2025	Sao Paulo		Red Bull Bragantino
+03/12/2025	Sao Paulo		Bragantino
 03/12/2025	Vasco		Juventude
 03/12/2025	Corinthians		Ceara
 07/12/2025	Gremio		Vasco
-07/12/2025	Atletico Mineiro		Palmeiras
+07/12/2025	Atletico-MG		Palmeiras
 07/12/2025	Ceara		Internacional
-07/12/2025	Red Bull Bragantino		Vitoria
+07/12/2025	Bragantino		Vitoria
 07/12/2025	Bahia		Fortaleza
 07/12/2025	Botafogo		Sport
 07/12/2025	Juventude		Cruzeiro
 07/12/2025	Fluminense		Flamengo
 07/12/2025	Corinthians		Sao Paulo
 07/12/2025	Santos		Mirassol
-10/12/2025	Flamengo		Red Bull Bragantino
+10/12/2025	Flamengo		Bragantino
 10/12/2025	Bahia		Vasco
-10/12/2025	Fortaleza		Atletico Mineiro
+10/12/2025	Fortaleza		Atletico-MG
 10/12/2025	Sport		Vitoria
 10/12/2025	Cruzeiro		Corinthians
 10/12/2025	Internacional		Santos
@@ -414,10 +350,10 @@ TeamListedFirst: home
 10/12/2025	Palmeiras		Fluminense
 10/12/2025	Botafogo		Gremio
 10/12/2025	Sao Paulo		Juventude
-14/12/2025	Atletico Mineiro		Flamengo
+14/12/2025	Atletico-MG		Flamengo
 14/12/2025	Gremio		Palmeiras
 14/12/2025	Ceara		Cruzeiro
-14/12/2025	Red Bull Bragantino		Fortaleza
+14/12/2025	Bragantino		Fortaleza
 14/12/2025	Vitoria		Mirassol
 14/12/2025	Juventude		Bahia
 14/12/2025	Santos		Sport
@@ -431,11 +367,11 @@ TeamListedFirst: home
 17/12/2025	Sao Paulo		Internacional
 17/12/2025	Fortaleza		Corinthians
 17/12/2025	Flamengo		Ceara
-17/12/2025	Red Bull Bragantino		Atletico Mineiro
+17/12/2025	Bragantino		Atletico-MG
 17/12/2025	Vasco		Mirassol
 17/12/2025	Palmeiras		Vitoria
-21/12/2025	Internacional		Red Bull Bragantino
-21/12/2025	Atletico Mineiro		Vasco
+21/12/2025	Internacional		Bragantino
+21/12/2025	Atletico-MG		Vasco
 21/12/2025	Ceara		Palmeiras
 21/12/2025	Mirassol		Flamengo
 21/12/2025	Vitoria		Sao Paulo
