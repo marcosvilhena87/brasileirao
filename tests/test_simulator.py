@@ -19,6 +19,35 @@ def test_league_table():
     assert table['played'].max() > 0
 
 
+def test_league_table_deterministic_sorting():
+    data = [
+        {
+            'date': '2025-01-01',
+            'home_team': 'Alpha',
+            'away_team': 'Beta',
+            'home_score': 1,
+            'away_score': 0,
+        },
+        {
+            'date': '2025-01-02',
+            'home_team': 'Beta',
+            'away_team': 'Gamma',
+            'home_score': 1,
+            'away_score': 0,
+        },
+        {
+            'date': '2025-01-03',
+            'home_team': 'Gamma',
+            'away_team': 'Alpha',
+            'home_score': 1,
+            'away_score': 0,
+        },
+    ]
+    df = pd.DataFrame(data)
+    table = league_table(df)
+    assert list(table.team) == sorted(table.team)
+
+
 def test_simulate_chances():
     df = parse_matches('data/Brasileirao2025A.txt')
     chances = simulate_chances(df, iterations=10)
