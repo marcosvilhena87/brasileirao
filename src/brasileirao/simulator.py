@@ -5,6 +5,15 @@ import pandas as pd
 import re
 from pathlib import Path
 
+
+def _parse_date(date_str: str) -> pd.Timestamp:
+    """Parse dates from multiple formats."""
+    parts = date_str.split("/")
+    year = parts[-1]
+    if len(year) == 4:
+        return pd.to_datetime(date_str, format="%d/%m/%Y")
+    return pd.to_datetime(date_str, format="%m/%d/%y")
+
 SCORE_PATTERN = re.compile(r"(\d+/\d+/\d+)\s+(.+?)\s+(\d+)-(\d+)\s+(.+?)\s*(?:\(ID:.*)?$")
 NOSCORE_PATTERN = re.compile(r"(\d+/\d+/\d+)\s+(.+?)\s{2,}(.+?)\s*(?:\(ID:.*)?$")
 
@@ -27,7 +36,7 @@ def parse_matches(path: str | Path) -> pd.DataFrame:
             if m:
                 date_str, home, hs, as_, away = m.groups()
                 rows.append({
-                    'date': pd.to_datetime(date_str),
+                    'date': _parse_date(date_str),
                     'home_team': home.strip(),
                     'away_team': away.strip(),
                     'home_score': int(hs),
@@ -38,7 +47,7 @@ def parse_matches(path: str | Path) -> pd.DataFrame:
             if m:
                 date_str, home, away = m.groups()
                 rows.append({
-                    'date': pd.to_datetime(date_str),
+                    'date': _parse_date(date_str),
                     'home_team': home.strip(),
                     'away_team': away.strip(),
                     'home_score': np.nan,
