@@ -155,3 +155,17 @@ def test_simulate_chances_neg_binom_seed_repeatability():
     )
     assert chances1 == chances2
     assert abs(sum(chances1.values()) - 1.0) < 1e-6
+
+
+def test_team_home_advantage_changes_results():
+    df = parse_matches('data/Brasileirao2025A.txt')
+    rng = np.random.default_rng(11)
+    base = simulate_chances(df, iterations=5, rng=rng)
+    rng = np.random.default_rng(11)
+    custom = simulate_chances(
+        df,
+        iterations=5,
+        rng=rng,
+        team_home_advantages={"Bahia": 2.0},
+    )
+    assert base != custom
