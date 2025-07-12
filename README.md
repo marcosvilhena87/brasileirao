@@ -12,8 +12,8 @@ python main.py --simulations 1000 --rating poisson
 ```
 
 The `--rating` option accepts `ratio` (default), `historic_ratio`, `poisson`,
-`neg_binom`, `dixon_coles`, or `elo` to choose how team strengths are
-estimated. The `historic_ratio` method
+`neg_binom`, `dixon_coles`, `elo`, or `leader_history` to choose how team
+strengths are estimated. The `historic_ratio` method
 mixes results from the 2024 season with a lower weight. The `elo` method
 updates team ratings over time using an Elo formula; the `simulate_chances`
 function exposes an `elo_k` parameter for deterministic runs. Use the
@@ -21,7 +21,9 @@ function exposes an `elo_k` parameter for deterministic runs. Use the
 factor (default `20.0`). Use the `--seed` option to set a random seed and
 reproduce a specific simulation. You can also specify team-specific home
 advantage multipliers by passing a dictionary to the `team_home_advantages`
-argument of `simulate_chances`.
+argument of `simulate_chances`. The `leader_history` rating method adjusts
+strengths based on how often teams led past seasons; configure its behaviour
+with `--leader-history-paths` and `--leader-weight`.
 
 The script outputs the estimated chance of winning the title for each team.
 
