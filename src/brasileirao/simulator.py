@@ -141,13 +141,75 @@ def compute_leader_stats(matches: pd.DataFrame) -> dict[str, int]:
     teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
     leader_counts = {t: 0 for t in teams}
 
-    played: list[dict] = []
+    stats = {
+        t: {
+            "team": t,
+            "played": 0,
+            "wins": 0,
+            "draws": 0,
+            "losses": 0,
+            "gf": 0,
+            "ga": 0,
+            "points": 0,
+        }
+        for t in teams
+    }
+
+    played_rows: list[dict] = []
+
     for _, row in matches.sort_values("date").iterrows():
         if pd.isna(row["home_score"]) or pd.isna(row["away_score"]):
             continue
-        played.append(row.to_dict())
-        table = league_table(pd.DataFrame(played))
-        leader_counts[table.iloc[0]["team"]] += 1
+
+        ht = row["home_team"]
+        at = row["away_team"]
+        hs = int(row["home_score"])
+        as_ = int(row["away_score"])
+
+        played_rows.append(row.to_dict())
+
+        h = stats[ht]
+        a = stats[at]
+        h["played"] += 1
+        a["played"] += 1
+        h["gf"] += hs
+        h["ga"] += as_
+        a["gf"] += as_
+        a["ga"] += hs
+
+        if hs > as_:
+            h["wins"] += 1
+            a["losses"] += 1
+            h["points"] += 3
+        elif hs < as_:
+            a["wins"] += 1
+            h["losses"] += 1
+            a["points"] += 3
+        else:
+            h["draws"] += 1
+            a["draws"] += 1
+            h["points"] += 1
+            a["points"] += 1
+
+        df = pd.DataFrame(stats.values())
+        df["gd"] = df["gf"] - df["ga"]
+        df["head_to_head"] = 0
+        played_df = pd.DataFrame(played_rows)
+
+        for _, group in df.groupby(["points", "wins", "gd", "gf"]):
+            if len(group) <= 1:
+                continue
+            teams_tied = group["team"].tolist()
+            h2h = _head_to_head_points(played_df, teams_tied)
+            for t, val in h2h.items():
+                df.loc[df["team"] == t, "head_to_head"] = val
+
+        df = df.sort_values(
+            ["points", "wins", "gd", "gf", "head_to_head", "team"],
+            ascending=[False, False, False, False, False, True],
+        ).reset_index(drop=True)
+
+        leader_counts[df.iloc[0]["team"]] += 1
 
     return leader_counts
 
@@ -540,6 +602,10 @@ def simulate_chances(
 
     if team_home_advantages is None:
         team_home_advantages = _estimate_team_home_advantages(matches)
+    else:
+        merged = _estimate_team_home_advantages(matches)
+        merged.update(team_home_advantages)
+        team_home_advantages = merged
 
     dc_rho = 0.0
     if rating_method == "poisson":
@@ -611,6 +677,10 @@ def simulate_relegation_chances(
 
     if team_home_advantages is None:
         team_home_advantages = _estimate_team_home_advantages(matches)
+    else:
+        merged = _estimate_team_home_advantages(matches)
+        merged.update(team_home_advantages)
+        team_home_advantages = merged
 
     dc_rho = 0.0
     if rating_method == "poisson":
@@ -699,6 +769,10 @@ def simulate_final_table(
 
     if team_home_advantages is None:
         team_home_advantages = _estimate_team_home_advantages(matches)
+    else:
+        merged = _estimate_team_home_advantages(matches)
+        merged.update(team_home_advantages)
+        team_home_advantages = merged
 
     dc_rho = 0.0
     if rating_method == "poisson":
