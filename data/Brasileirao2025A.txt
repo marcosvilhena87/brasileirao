@@ -124,13 +124,8 @@ TeamListedFirst: home
 13/07/2025	Cruzeiro	4-1	Gremio
 13/07/2025	Fortaleza	0-1	Ceara
 14/07/2025	Juventude	2-0	Sport
-15/07/2025	Palmeiras		Juventude
-15/07/2025	Botafogo		Mirassol
-15/07/2025	Sport			Flamengo
-15/07/2025	Fluminense		Ceara
 16/07/2025	Bahia			Internacional
 16/07/2025	Juventude		Vasco
-16/07/2025	Gremio			Fortaleza
 16/07/2025	Atletico-MG		Sport
 16/07/2025	Palmeiras		Mirassol
 16/07/2025	Ceara			Corinthians
@@ -138,8 +133,6 @@ TeamListedFirst: home
 16/07/2025	Botafogo		Vitoria
 16/07/2025	Bragantino		Sao Paulo
 17/07/2025	Fluminense		Cruzeiro
-18/07/2025	Mirassol		Fluminense
-18/07/2025	Santos			Palmeiras
 19/07/2025	Fortaleza		Bahia
 19/07/2025	Vasco			Gremio
 19/07/2025	Mirassol		Santos
@@ -150,6 +143,13 @@ TeamListedFirst: home
 20/07/2025	Sport			Botafogo
 20/07/2025	Palmeiras		Atletico-MG
 20/07/2025	Flamengo		Fluminense
+21/07/2025	Palmeiras		Juventude
+21/07/2025	Botafogo		Mirassol
+21/07/2025	Sport			Flamengo
+21/07/2025	Fluminense		Ceara
+22/07/2025	Gremio			Fortaleza
+22/07/2025	Mirassol		Fluminense
+22/07/2025	Santos			Palmeiras
 23/07/2025	Gremio			Botafogo
 23/07/2025	Atletico-MG		Fortaleza
 23/07/2025	Vasco			Bahia
