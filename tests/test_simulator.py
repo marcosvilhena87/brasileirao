@@ -81,6 +81,19 @@ def test_estimate_strengths():
     assert all(v["attack"] > 0 and v["defense"] > 0 for v in strengths.values())
 
 
+def test_estimate_strengths_zero_goals():
+    data = [
+        {"date": "2025-01-01", "home_team": "A", "away_team": "B", "home_score": 0, "away_score": 1},
+        {"date": "2025-01-02", "home_team": "A", "away_team": "C", "home_score": 0, "away_score": 2},
+        {"date": "2025-01-03", "home_team": "C", "away_team": "B", "home_score": 1, "away_score": 0},
+    ]
+    df = pd.DataFrame(data)
+    strengths, _, _ = simulator._estimate_strengths(df)
+    # team A scored zero goals, team C conceded zero goals
+    assert strengths["A"]["attack"] > 0
+    assert strengths["C"]["defense"] > 0
+
+
 def test_estimate_strengths_with_history():
     df = parse_matches('data/Brasileirao2025A.txt')
     strengths, _, _ = simulator.estimate_strengths_with_history(df)

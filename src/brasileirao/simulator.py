@@ -214,7 +214,7 @@ def compute_leader_stats(matches: pd.DataFrame) -> dict[str, int]:
     return leader_counts
 
 
-def _estimate_strengths(matches: pd.DataFrame):
+def _estimate_strengths(matches: pd.DataFrame, smooth: float = 1.0):
     played = matches.dropna(subset=['home_score', 'away_score'])
     total_goals = played['home_score'].sum() + played['away_score'].sum()
     total_games = len(played)
@@ -236,8 +236,8 @@ def _estimate_strengths(matches: pd.DataFrame):
         if gp == 0:
             attack = defense = 1.0
         else:
-            attack = (gf / gp) / avg_goals
-            defense = (ga / gp) / avg_goals
+            attack = ((gf + smooth) / (gp + smooth)) / avg_goals
+            defense = ((ga + smooth) / (gp + smooth)) / avg_goals
         strengths[team] = {'attack': attack, 'defense': defense}
     return strengths, avg_goals, home_adv
 
@@ -271,6 +271,7 @@ def estimate_strengths_with_history(
     current_matches: pd.DataFrame | None = None,
     past_path: str | Path = "data/Brasileirao2024A.txt",
     past_weight: float = 0.5,
+    smooth: float = 1.0,
 ) -> tuple[dict[str, dict[str, float]], float, float]:
     """Estimate strengths using current season matches and weighted history."""
     if current_matches is None:
@@ -279,18 +280,19 @@ def estimate_strengths_with_history(
     if 0 < past_weight < 1:
         past_matches = past_matches.sample(frac=past_weight, random_state=0).reset_index(drop=True)
     combined = pd.concat([current_matches, past_matches], ignore_index=True)
-    return _estimate_strengths(combined)
+    return _estimate_strengths(combined, smooth=smooth)
 
 
 def estimate_leader_history_strengths(
     current_matches: pd.DataFrame | None = None,
     past_paths: list[str | Path] | str | Path = "data/Brasileirao2024A.txt",
     weight: float = 0.5,
+    smooth: float = 1.0,
 ) -> tuple[dict[str, dict[str, float]], float, float]:
     """Estimate strengths influenced by historical league leaders."""
     if current_matches is None:
         current_matches = parse_matches("data/Brasileirao2025A.txt")
-    strengths, avg_goals, home_adv = _estimate_strengths(current_matches)
+    strengths, avg_goals, home_adv = _estimate_strengths(current_matches, smooth=smooth)
 
     if isinstance(past_paths, (str, Path)):
         past_paths = [past_paths]
@@ -624,6 +626,7 @@ def simulate_chances(
     team_home_advantages: dict[str, float] | None = None,
     leader_history_paths: list[str | Path] | None = None,
     leader_history_weight: float = 0.5,
+    smooth: float = 1.0,
 ) -> dict[str, float]:
     """Simulate remaining fixtures and return title probabilities.
 
@@ -647,6 +650,9 @@ def simulate_chances(
     leader_history_weight : float, optional
         Influence of historic leader counts when ``rating_method`` is
         ``"leader_history"``.
+    smooth : float, default 1.0
+        Smoothing constant added to goals scored and conceded when estimating
+        team strengths under the ``"ratio"`` methods.
     """
     if rng is None:
         rng = np.random.default_rng()
@@ -666,7 +672,7 @@ def simulate_chances(
     elif rating_method == "skellam":
         strengths, avg_goals, home_adv = estimate_skellam_strengths(matches)
     elif rating_method == "historic_ratio":
-        strengths, avg_goals, home_adv = estimate_strengths_with_history(matches)
+        strengths, avg_goals, home_adv = estimate_strengths_with_history(matches, smooth=smooth)
     elif rating_method == "elo":
         strengths, avg_goals, home_adv = estimate_elo_strengths(matches, K=elo_k)
     elif rating_method == "dixon_coles":
@@ -674,10 +680,10 @@ def simulate_chances(
     elif rating_method == "leader_history":
         paths = leader_history_paths or ["data/Brasileirao2024A.txt"]
         strengths, avg_goals, home_adv = estimate_leader_history_strengths(
-            matches, paths, weight=leader_history_weight
+            matches, paths, weight=leader_history_weight, smooth=smooth
         )
     else:
-        strengths, avg_goals, home_adv = _estimate_strengths(matches)
+        strengths, avg_goals, home_adv = _estimate_strengths(matches, smooth=smooth)
     teams = pd.unique(matches[['home_team', 'away_team']].values.ravel())
     champs = {t: 0 for t in teams}
 
@@ -716,11 +722,16 @@ def simulate_relegation_chances(
     team_home_advantages: dict[str, float] | None = None,
     leader_history_paths: list[str | Path] | None = None,
     leader_history_weight: float = 0.5,
+    smooth: float = 1.0,
 ) -> dict[str, float]:
     """Simulate remaining fixtures and return relegation probabilities.
 
     The parameters mirror :func:`simulate_chances`. The returned values map
     each team to the probability of finishing in the bottom four positions.
+    
+    Parameters are the same as for :func:`simulate_chances`. ``smooth`` controls
+    the constant added to goals scored and conceded when calculating attack and
+    defence ratings under the ``"ratio"`` methods.
     """
 
     if rng is None:
@@ -741,7 +752,7 @@ def simulate_relegation_chances(
     elif rating_method == "skellam":
         strengths, avg_goals, home_adv = estimate_skellam_strengths(matches)
     elif rating_method == "historic_ratio":
-        strengths, avg_goals, home_adv = estimate_strengths_with_history(matches)
+        strengths, avg_goals, home_adv = estimate_strengths_with_history(matches, smooth=smooth)
     elif rating_method == "elo":
         strengths, avg_goals, home_adv = estimate_elo_strengths(matches, K=elo_k)
     elif rating_method == "dixon_coles":
@@ -749,10 +760,10 @@ def simulate_relegation_chances(
     elif rating_method == "leader_history":
         paths = leader_history_paths or ["data/Brasileirao2024A.txt"]
         strengths, avg_goals, home_adv = estimate_leader_history_strengths(
-            matches, paths, weight=leader_history_weight
+            matches, paths, weight=leader_history_weight, smooth=smooth
         )
     else:
-        strengths, avg_goals, home_adv = _estimate_strengths(matches)
+        strengths, avg_goals, home_adv = _estimate_strengths(matches, smooth=smooth)
 
     teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
     relegated = {t: 0 for t in teams}
@@ -807,12 +818,14 @@ def simulate_final_table(
     team_home_advantages: dict[str, float] | None = None,
     leader_history_paths: list[str | Path] | None = None,
     leader_history_weight: float = 0.5,
+    smooth: float = 1.0,
 ) -> pd.DataFrame:
     """Project final league positions and points for each team.
 
     The parameters mirror :func:`simulate_chances`. The returned ``DataFrame``
     contains the average finishing position and point total of each club,
     sorted by expected position.
+    ``smooth`` has the same meaning as in :func:`simulate_chances`.
     """
 
     if rng is None:
@@ -833,7 +846,7 @@ def simulate_final_table(
     elif rating_method == "skellam":
         strengths, avg_goals, home_adv = estimate_skellam_strengths(matches)
     elif rating_method == "historic_ratio":
-        strengths, avg_goals, home_adv = estimate_strengths_with_history(matches)
+        strengths, avg_goals, home_adv = estimate_strengths_with_history(matches, smooth=smooth)
     elif rating_method == "elo":
         strengths, avg_goals, home_adv = estimate_elo_strengths(matches, K=elo_k)
     elif rating_method == "dixon_coles":
@@ -841,10 +854,10 @@ def simulate_final_table(
     elif rating_method == "leader_history":
         paths = leader_history_paths or ["data/Brasileirao2024A.txt"]
         strengths, avg_goals, home_adv = estimate_leader_history_strengths(
-            matches, paths, weight=leader_history_weight
+            matches, paths, weight=leader_history_weight, smooth=smooth
         )
     else:
-        strengths, avg_goals, home_adv = _estimate_strengths(matches)
+        strengths, avg_goals, home_adv = _estimate_strengths(matches, smooth=smooth)
 
     teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
     pos_totals = {t: 0.0 for t in teams}
@@ -911,12 +924,15 @@ def summary_table(
     team_home_advantages: dict[str, float] | None = None,
     leader_history_paths: list[str | Path] | None = None,
     leader_history_weight: float = 0.5,
+    smooth: float = 1.0,
 ) -> pd.DataFrame:
     """Return combined projections for each team.
 
     The returned ``DataFrame`` contains one row per club with the expected
     final rank, projected point total rounded to an integer, title chance and
     relegation probability. The table is sorted by projected position.
+    The ``smooth`` parameter is forwarded to the underlying simulation
+    functions.
     """
 
     chances = simulate_chances(
@@ -928,6 +944,7 @@ def summary_table(
         team_home_advantages=team_home_advantages,
         leader_history_paths=leader_history_paths,
         leader_history_weight=leader_history_weight,
+        smooth=smooth,
     )
     relegation = simulate_relegation_chances(
         matches,
@@ -938,6 +955,7 @@ def summary_table(
         team_home_advantages=team_home_advantages,
         leader_history_paths=leader_history_paths,
         leader_history_weight=leader_history_weight,
+        smooth=smooth,
     )
     table = simulate_final_table(
         matches,
@@ -948,6 +966,7 @@ def summary_table(
         team_home_advantages=team_home_advantages,
         leader_history_paths=leader_history_paths,
         leader_history_weight=leader_history_weight,
+        smooth=smooth,
     )
 
     table = table.sort_values("position").reset_index(drop=True)
