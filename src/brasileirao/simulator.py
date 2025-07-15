@@ -410,9 +410,60 @@ def estimate_negative_binomial_strengths(matches: pd.DataFrame):
 
 
 def estimate_skellam_strengths(matches: pd.DataFrame):
-    """Estimate strengths using a simple Skellam regression on goal difference."""
-    # Use Poisson regression estimates and treat goal difference via Skellam
-    return estimate_poisson_strengths(matches)
+    """Estimate team strengths via a simple Skellam regression.
+
+    This implementation fits independent Poisson models for home and away
+    goals using :mod:`statsmodels`. The resulting attack and defence factors are
+    interpreted under a Skellam framework where goal difference is the
+    difference of the two Poisson rates.
+    """
+
+    import statsmodels.api as sm
+    import statsmodels.formula.api as smf
+
+    played = matches.dropna(subset=["home_score", "away_score"])
+
+    rows: list[dict] = []
+    for _, row in played.iterrows():
+        rows.append(
+            {
+                "team": row["home_team"],
+                "opponent": row["away_team"],
+                "home": 1,
+                "goals": row["home_score"],
+            }
+        )
+        rows.append(
+            {
+                "team": row["away_team"],
+                "opponent": row["home_team"],
+                "home": 0,
+                "goals": row["away_score"],
+            }
+        )
+
+    df = pd.DataFrame(rows)
+
+    model = smf.glm(
+        "goals ~ home + C(team) + C(opponent)",
+        data=df,
+        family=sm.families.Poisson(),
+    ).fit()
+
+    base_mu = float(np.exp(model.params["Intercept"]))
+    home_adv = float(np.exp(model.params.get("home", 0.0)))
+
+    teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
+    strengths: dict[str, dict[str, float]] = {}
+    for t in teams:
+        atk_coef = model.params.get(f"C(team)[T.{t}]", 0.0)
+        def_coef = model.params.get(f"C(opponent)[T.{t}]", 0.0)
+        strengths[t] = {
+            "attack": float(np.exp(atk_coef)),
+            "defense": float(np.exp(def_coef)),
+        }
+
+    return strengths, base_mu, home_adv
 
 
 def estimate_elo_strengths(matches: pd.DataFrame, K: float = 20.0):
