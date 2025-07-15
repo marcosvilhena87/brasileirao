@@ -45,6 +45,12 @@ def main() -> None:
         help="Elo K factor when using the 'elo' rating method",
     )
     parser.add_argument(
+        "--elo-home-advantage",
+        type=float,
+        default=0.0,
+        help="Rating points added to the home team in Elo calculations",
+    )
+    parser.add_argument(
         "--leader-history-paths",
         nargs="*",
         default=["data/Brasileirao2024A.txt"],
@@ -66,6 +72,7 @@ def main() -> None:
         rating_method=args.rating,
         rng=rng,
         elo_k=args.elo_k,
+        home_field_advantage=args.elo_home_advantage,
         leader_history_paths=args.leader_history_paths,
         leader_history_weight=args.leader_weight,
     )
@@ -76,6 +83,7 @@ def main() -> None:
         rating_method=args.rating,
         rng=rng,
         elo_k=args.elo_k,
+        home_field_advantage=args.elo_home_advantage,
         leader_history_paths=args.leader_history_paths,
         leader_history_weight=args.leader_weight,
     )
@@ -86,6 +94,7 @@ def main() -> None:
         rating_method=args.rating,
         rng=rng,
         elo_k=args.elo_k,
+        home_field_advantage=args.elo_home_advantage,
         leader_history_paths=args.leader_history_paths,
         leader_history_weight=args.leader_weight,
     )

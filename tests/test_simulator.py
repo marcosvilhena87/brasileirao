@@ -211,6 +211,28 @@ def test_team_home_advantage_changes_results():
     assert base != custom
 
 
+def test_home_field_advantage_changes_elo_results():
+    df = parse_matches("data/Brasileirao2025A.txt")
+    rng = np.random.default_rng(22)
+    base = simulate_chances(
+        df,
+        iterations=5,
+        rating_method="elo",
+        rng=rng,
+        elo_k=20.0,
+    )
+    rng = np.random.default_rng(22)
+    adv = simulate_chances(
+        df,
+        iterations=5,
+        rating_method="elo",
+        rng=rng,
+        elo_k=20.0,
+        home_field_advantage=50.0,
+    )
+    assert base != adv
+
+
 def test_simulate_chances_dixon_coles_seed_repeatability():
     df = parse_matches("data/Brasileirao2025A.txt")
     rng = np.random.default_rng(123)
