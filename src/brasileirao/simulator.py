@@ -468,7 +468,9 @@ def estimate_skellam_strengths(matches: pd.DataFrame):
     return strengths, base_mu, home_adv
 
 
-def estimate_elo_strengths(matches: pd.DataFrame, K: float = 20.0):
+def estimate_elo_strengths(
+    matches: pd.DataFrame, K: float = 20.0, home_field_advantage: float = 0.0
+):
     """Estimate team strengths using an Elo ratings approach.
 
     Parameters
@@ -477,6 +479,10 @@ def estimate_elo_strengths(matches: pd.DataFrame, K: float = 20.0):
         Fixture list including results for played games.
     K : float, default 20.0
         Rating update factor.
+    home_field_advantage : float, default 0.0
+        Extra rating points given to the home side when computing the expected
+        result. This biases Elo updates in favour of the hosts without altering
+        final ratings directly.
 
     Returns
     -------
@@ -502,7 +508,9 @@ def estimate_elo_strengths(matches: pd.DataFrame, K: float = 20.0):
 
         r_home = ratings[home]
         r_away = ratings[away]
-        expected_home = 1 / (1 + 10 ** ((r_away - r_home) / 400))
+        expected_home = 1 / (
+            1 + 10 ** ((r_away - (r_home + home_field_advantage)) / 400)
+        )
         score_home = 1.0 if hs > as_ else 0.5 if hs == as_ else 0.0
 
         ratings[home] = r_home + K * (score_home - expected_home)
@@ -623,6 +631,7 @@ def simulate_chances(
     rating_method: str = "ratio",
     rng: np.random.Generator | None = None,
     elo_k: float = 20.0,
+    home_field_advantage: float = 0.0,
     team_home_advantages: dict[str, float] | None = None,
     leader_history_paths: list[str | Path] | None = None,
     leader_history_weight: float = 0.5,
@@ -642,6 +651,9 @@ def simulate_chances(
         Random number generator to use. A new generator is created when ``None``.
     elo_k : float, default 20.0
         K factor when ``rating_method`` is ``"elo"``.
+    home_field_advantage : float, default 0.0
+        Rating bonus given to the home team when calculating Elo win
+        probabilities. Only used when ``rating_method`` is ``"elo"``.
     team_home_advantages : dict[str, float] | None, optional
         Multiplicative home advantage factor for each team. When ``None``,
         factors are estimated from played matches.
@@ -674,7 +686,9 @@ def simulate_chances(
     elif rating_method == "historic_ratio":
         strengths, avg_goals, home_adv = estimate_strengths_with_history(matches, smooth=smooth)
     elif rating_method == "elo":
-        strengths, avg_goals, home_adv = estimate_elo_strengths(matches, K=elo_k)
+        strengths, avg_goals, home_adv = estimate_elo_strengths(
+            matches, K=elo_k, home_field_advantage=home_field_advantage
+        )
     elif rating_method == "dixon_coles":
         strengths, avg_goals, home_adv, dc_rho = estimate_dixon_coles_strengths(matches)
     elif rating_method == "leader_history":
@@ -719,6 +733,7 @@ def simulate_relegation_chances(
     rating_method: str = "ratio",
     rng: np.random.Generator | None = None,
     elo_k: float = 20.0,
+    home_field_advantage: float = 0.0,
     team_home_advantages: dict[str, float] | None = None,
     leader_history_paths: list[str | Path] | None = None,
     leader_history_weight: float = 0.5,
@@ -731,7 +746,8 @@ def simulate_relegation_chances(
     
     Parameters are the same as for :func:`simulate_chances`. ``smooth`` controls
     the constant added to goals scored and conceded when calculating attack and
-    defence ratings under the ``"ratio"`` methods.
+    defence ratings under the ``"ratio"`` methods. ``home_field_advantage`` only
+    affects the Elo method.
     """
 
     if rng is None:
@@ -754,7 +770,9 @@ def simulate_relegation_chances(
     elif rating_method == "historic_ratio":
         strengths, avg_goals, home_adv = estimate_strengths_with_history(matches, smooth=smooth)
     elif rating_method == "elo":
-        strengths, avg_goals, home_adv = estimate_elo_strengths(matches, K=elo_k)
+        strengths, avg_goals, home_adv = estimate_elo_strengths(
+            matches, K=elo_k, home_field_advantage=home_field_advantage
+        )
     elif rating_method == "dixon_coles":
         strengths, avg_goals, home_adv, dc_rho = estimate_dixon_coles_strengths(matches)
     elif rating_method == "leader_history":
@@ -848,7 +866,9 @@ def simulate_final_table(
     elif rating_method == "historic_ratio":
         strengths, avg_goals, home_adv = estimate_strengths_with_history(matches, smooth=smooth)
     elif rating_method == "elo":
-        strengths, avg_goals, home_adv = estimate_elo_strengths(matches, K=elo_k)
+        strengths, avg_goals, home_adv = estimate_elo_strengths(
+            matches, K=elo_k, home_field_advantage=home_field_advantage
+        )
     elif rating_method == "dixon_coles":
         strengths, avg_goals, home_adv, dc_rho = estimate_dixon_coles_strengths(matches)
     elif rating_method == "leader_history":
@@ -921,6 +941,7 @@ def summary_table(
     rating_method: str = "ratio",
     rng: np.random.Generator | None = None,
     elo_k: float = 20.0,
+    home_field_advantage: float = 0.0,
     team_home_advantages: dict[str, float] | None = None,
     leader_history_paths: list[str | Path] | None = None,
     leader_history_weight: float = 0.5,
@@ -933,6 +954,8 @@ def summary_table(
     relegation probability. The table is sorted by projected position.
     The ``smooth`` parameter is forwarded to the underlying simulation
     functions.
+    ``home_field_advantage`` is forwarded to the Elo-based rating routine and
+    has no effect for other methods.
     """
 
     chances = simulate_chances(
@@ -941,6 +964,7 @@ def summary_table(
         rating_method=rating_method,
         rng=rng,
         elo_k=elo_k,
+        home_field_advantage=home_field_advantage,
         team_home_advantages=team_home_advantages,
         leader_history_paths=leader_history_paths,
         leader_history_weight=leader_history_weight,
@@ -952,6 +976,7 @@ def summary_table(
         rating_method=rating_method,
         rng=rng,
         elo_k=elo_k,
+        home_field_advantage=home_field_advantage,
         team_home_advantages=team_home_advantages,
         leader_history_paths=leader_history_paths,
         leader_history_weight=leader_history_weight,
@@ -963,6 +988,7 @@ def summary_table(
         rating_method=rating_method,
         rng=rng,
         elo_k=elo_k,
+        home_field_advantage=home_field_advantage,
         team_home_advantages=team_home_advantages,
         leader_history_paths=leader_history_paths,
         leader_history_weight=leader_history_weight,

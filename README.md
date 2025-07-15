@@ -24,7 +24,9 @@ reproduce a specific simulation. You can also specify team-specific home
 advantage multipliers by passing a dictionary to the `team_home_advantages`
 argument of `simulate_chances`. The `leader_history` rating method adjusts
 strengths based on how often teams led past seasons; configure its behaviour
-with `--leader-history-paths` and `--leader-weight`.
+with `--leader-history-paths` and `--leader-weight`. When using Elo ratings you
+may set a base home field bonus in rating points via the `home_field_advantage`
+function parameter or the `--elo-home-advantage` CLI option.
 
 The script outputs the estimated chance of winning the title for each team. It then prints the probability of each side finishing in the bottom four and being relegated.
 It also estimates the average final position and points of every club.
