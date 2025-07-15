@@ -88,6 +88,13 @@ def test_estimate_strengths_with_history():
     assert set(teams).issubset(set(strengths.keys()))
 
 
+def test_estimate_skellam_strengths_deterministic():
+    df = parse_matches('data/Brasileirao2025A.txt')
+    first = simulator.estimate_skellam_strengths(df)
+    second = simulator.estimate_skellam_strengths(df)
+    assert first == second
+
+
 def test_simulate_chances_historic_ratio():
     df = parse_matches('data/Brasileirao2025A.txt')
     chances = simulate_chances(df, iterations=10, rating_method="historic_ratio")
