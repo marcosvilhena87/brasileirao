@@ -353,6 +353,16 @@ def test_simulate_final_table_deterministic():
     assert len(table1) == len(pd.unique(df[["home_team", "away_team"]].values.ravel()))
 
 
+def test_summary_table_deterministic_columns():
+    df = parse_matches("data/Brasileirao2025A.txt")
+    rng = np.random.default_rng(123)
+    table1 = simulator.summary_table(df, iterations=5, rng=rng)
+    rng = np.random.default_rng(123)
+    table2 = simulator.summary_table(df, iterations=5, rng=rng)
+    pd.testing.assert_frame_equal(table1, table2)
+    assert {"position", "team", "points", "title", "relegation"}.issubset(table1.columns)
+
+
 def test_league_table_goal_difference_tiebreak():
     data = [
         {"date": "2025-01-01", "home_team": "A", "away_team": "B", "home_score": 1, "away_score": 2},

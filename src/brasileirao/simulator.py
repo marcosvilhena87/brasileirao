@@ -833,6 +833,7 @@ def simulate_final_table(
     rating_method: str = "ratio",
     rng: np.random.Generator | None = None,
     elo_k: float = 20.0,
+    home_field_advantage: float = 0.0,
     team_home_advantages: dict[str, float] | None = None,
     leader_history_paths: list[str | Path] | None = None,
     leader_history_weight: float = 0.5,
@@ -844,6 +845,7 @@ def simulate_final_table(
     contains the average finishing position and point total of each club,
     sorted by expected position.
     ``smooth`` has the same meaning as in :func:`simulate_chances`.
+    ``home_field_advantage`` only affects the Elo method.
     """
 
     if rng is None:
