@@ -625,6 +625,51 @@ def _dixon_coles_sample(
     return int(flat // (max_goals + 1)), int(flat % (max_goals + 1))
 
 
+def get_strengths(
+    matches: pd.DataFrame,
+    rating_method: str,
+    *,
+    elo_k: float = 20.0,
+    home_field_advantage: float = 0.0,
+    leader_history_paths: list[str | Path] | None = None,
+    leader_history_weight: float = 0.5,
+    smooth: float = 1.0,
+) -> tuple[dict[str, dict[str, float]], float, float, float]:
+    """Return strength estimates for ``matches`` using ``rating_method``.
+
+    Parameters other than ``matches`` and ``rating_method`` mirror those of the
+    :func:`simulate_chances` routine.  The returned tuple contains the attack and
+    defence multipliers for each team, the average goals per game, the overall
+    home advantage factor and, for the Dixon-Coles model, the ``rho`` parameter.
+    The final value is ``0.0`` for all other methods.
+    """
+
+    dc_rho = 0.0
+    if rating_method == "poisson":
+        strengths, avg_goals, home_adv = estimate_poisson_strengths(matches)
+    elif rating_method == "neg_binom":
+        strengths, avg_goals, home_adv = estimate_negative_binomial_strengths(matches)
+    elif rating_method == "skellam":
+        strengths, avg_goals, home_adv = estimate_skellam_strengths(matches)
+    elif rating_method == "historic_ratio":
+        strengths, avg_goals, home_adv = estimate_strengths_with_history(matches, smooth=smooth)
+    elif rating_method == "elo":
+        strengths, avg_goals, home_adv = estimate_elo_strengths(
+            matches, K=elo_k, home_field_advantage=home_field_advantage
+        )
+    elif rating_method == "dixon_coles":
+        strengths, avg_goals, home_adv, dc_rho = estimate_dixon_coles_strengths(matches)
+    elif rating_method == "leader_history":
+        paths = leader_history_paths or ["data/Brasileirao2024A.txt"]
+        strengths, avg_goals, home_adv = estimate_leader_history_strengths(
+            matches, paths, weight=leader_history_weight, smooth=smooth
+        )
+    else:
+        strengths, avg_goals, home_adv = _estimate_strengths(matches, smooth=smooth)
+
+    return strengths, avg_goals, home_adv, dc_rho
+
+
 def simulate_chances(
     matches: pd.DataFrame,
     iterations: int = 1000,
@@ -676,28 +721,15 @@ def simulate_chances(
         merged.update(team_home_advantages)
         team_home_advantages = merged
 
-    dc_rho = 0.0
-    if rating_method == "poisson":
-        strengths, avg_goals, home_adv = estimate_poisson_strengths(matches)
-    elif rating_method == "neg_binom":
-        strengths, avg_goals, home_adv = estimate_negative_binomial_strengths(matches)
-    elif rating_method == "skellam":
-        strengths, avg_goals, home_adv = estimate_skellam_strengths(matches)
-    elif rating_method == "historic_ratio":
-        strengths, avg_goals, home_adv = estimate_strengths_with_history(matches, smooth=smooth)
-    elif rating_method == "elo":
-        strengths, avg_goals, home_adv = estimate_elo_strengths(
-            matches, K=elo_k, home_field_advantage=home_field_advantage
-        )
-    elif rating_method == "dixon_coles":
-        strengths, avg_goals, home_adv, dc_rho = estimate_dixon_coles_strengths(matches)
-    elif rating_method == "leader_history":
-        paths = leader_history_paths or ["data/Brasileirao2024A.txt"]
-        strengths, avg_goals, home_adv = estimate_leader_history_strengths(
-            matches, paths, weight=leader_history_weight, smooth=smooth
-        )
-    else:
-        strengths, avg_goals, home_adv = _estimate_strengths(matches, smooth=smooth)
+    strengths, avg_goals, home_adv, dc_rho = get_strengths(
+        matches,
+        rating_method,
+        elo_k=elo_k,
+        home_field_advantage=home_field_advantage,
+        leader_history_paths=leader_history_paths,
+        leader_history_weight=leader_history_weight,
+        smooth=smooth,
+    )
     teams = pd.unique(matches[['home_team', 'away_team']].values.ravel())
     champs = {t: 0 for t in teams}
 
@@ -760,28 +792,15 @@ def simulate_relegation_chances(
         merged.update(team_home_advantages)
         team_home_advantages = merged
 
-    dc_rho = 0.0
-    if rating_method == "poisson":
-        strengths, avg_goals, home_adv = estimate_poisson_strengths(matches)
-    elif rating_method == "neg_binom":
-        strengths, avg_goals, home_adv = estimate_negative_binomial_strengths(matches)
-    elif rating_method == "skellam":
-        strengths, avg_goals, home_adv = estimate_skellam_strengths(matches)
-    elif rating_method == "historic_ratio":
-        strengths, avg_goals, home_adv = estimate_strengths_with_history(matches, smooth=smooth)
-    elif rating_method == "elo":
-        strengths, avg_goals, home_adv = estimate_elo_strengths(
-            matches, K=elo_k, home_field_advantage=home_field_advantage
-        )
-    elif rating_method == "dixon_coles":
-        strengths, avg_goals, home_adv, dc_rho = estimate_dixon_coles_strengths(matches)
-    elif rating_method == "leader_history":
-        paths = leader_history_paths or ["data/Brasileirao2024A.txt"]
-        strengths, avg_goals, home_adv = estimate_leader_history_strengths(
-            matches, paths, weight=leader_history_weight, smooth=smooth
-        )
-    else:
-        strengths, avg_goals, home_adv = _estimate_strengths(matches, smooth=smooth)
+    strengths, avg_goals, home_adv, dc_rho = get_strengths(
+        matches,
+        rating_method,
+        elo_k=elo_k,
+        home_field_advantage=home_field_advantage,
+        leader_history_paths=leader_history_paths,
+        leader_history_weight=leader_history_weight,
+        smooth=smooth,
+    )
 
     teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
     relegated = {t: 0 for t in teams}
@@ -858,28 +877,15 @@ def simulate_final_table(
         merged.update(team_home_advantages)
         team_home_advantages = merged
 
-    dc_rho = 0.0
-    if rating_method == "poisson":
-        strengths, avg_goals, home_adv = estimate_poisson_strengths(matches)
-    elif rating_method == "neg_binom":
-        strengths, avg_goals, home_adv = estimate_negative_binomial_strengths(matches)
-    elif rating_method == "skellam":
-        strengths, avg_goals, home_adv = estimate_skellam_strengths(matches)
-    elif rating_method == "historic_ratio":
-        strengths, avg_goals, home_adv = estimate_strengths_with_history(matches, smooth=smooth)
-    elif rating_method == "elo":
-        strengths, avg_goals, home_adv = estimate_elo_strengths(
-            matches, K=elo_k, home_field_advantage=home_field_advantage
-        )
-    elif rating_method == "dixon_coles":
-        strengths, avg_goals, home_adv, dc_rho = estimate_dixon_coles_strengths(matches)
-    elif rating_method == "leader_history":
-        paths = leader_history_paths or ["data/Brasileirao2024A.txt"]
-        strengths, avg_goals, home_adv = estimate_leader_history_strengths(
-            matches, paths, weight=leader_history_weight, smooth=smooth
-        )
-    else:
-        strengths, avg_goals, home_adv = _estimate_strengths(matches, smooth=smooth)
+    strengths, avg_goals, home_adv, dc_rho = get_strengths(
+        matches,
+        rating_method,
+        elo_k=elo_k,
+        home_field_advantage=home_field_advantage,
+        leader_history_paths=leader_history_paths,
+        leader_history_weight=leader_history_weight,
+        smooth=smooth,
+    )
 
     teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
     pos_totals = {t: 0.0 for t in teams}
