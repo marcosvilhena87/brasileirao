@@ -267,6 +267,20 @@ def _estimate_team_home_advantages(matches: pd.DataFrame) -> dict[str, float]:
     return factors
 
 
+def _estimate_dispersion(matches: pd.DataFrame) -> float:
+    """Return method-of-moments dispersion for Negative Binomial sampling."""
+    played = matches.dropna(subset=["home_score", "away_score"])
+    if played.empty:
+        return 0.0
+    mean_home = played["home_score"].mean()
+    var_home = played["home_score"].var()
+    mean_away = played["away_score"].mean()
+    var_away = played["away_score"].var()
+    alpha_home = max(var_home - mean_home, 0.0) / (mean_home ** 2) if mean_home else 0.0
+    alpha_away = max(var_away - mean_away, 0.0) / (mean_away ** 2) if mean_away else 0.0
+    return (alpha_home + alpha_away) / 2
+
+
 def estimate_strengths_with_history(
     current_matches: pd.DataFrame | None = None,
     past_path: str | Path = "data/Brasileirao2024A.txt",
@@ -395,6 +409,8 @@ def estimate_negative_binomial_strengths(matches: pd.DataFrame):
         family=sm.families.NegativeBinomial(),
     ).fit()
 
+    dispersion = _estimate_dispersion(matches)
+
     base_mu = float(np.exp(model.params["Intercept"]))
     home_adv = float(np.exp(model.params.get("home", 0.0)))
 
@@ -408,7 +424,7 @@ def estimate_negative_binomial_strengths(matches: pd.DataFrame):
             "defense": float(np.exp(def_coef)),
         }
 
-    return strengths, base_mu, home_adv
+    return strengths, base_mu, home_adv, dispersion
 
 
 def estimate_skellam_strengths(matches: pd.DataFrame):
@@ -648,7 +664,7 @@ def get_strengths(
     if rating_method == "poisson":
         strengths, avg_goals, home_adv = estimate_poisson_strengths(matches)
     elif rating_method == "neg_binom":
-        strengths, avg_goals, home_adv = estimate_negative_binomial_strengths(matches)
+        strengths, avg_goals, home_adv, dc_rho = estimate_negative_binomial_strengths(matches)
     elif rating_method == "skellam":
         strengths, avg_goals, home_adv = estimate_skellam_strengths(matches)
     elif rating_method == "historic_ratio":
@@ -746,6 +762,12 @@ def simulate_chances(
             mu_away = avg_goals * strengths[at]['attack'] * strengths[ht]['defense']
             if rating_method == "dixon_coles":
                 hs, as_ = _dixon_coles_sample(mu_home, mu_away, dc_rho, rng)
+            elif rating_method == "neg_binom" and dc_rho > 0:
+                r = 1.0 / dc_rho
+                p_home = r / (r + mu_home)
+                p_away = r / (r + mu_away)
+                hs = rng.negative_binomial(r, p_home)
+                as_ = rng.negative_binomial(r, p_away)
             else:
                 hs = rng.poisson(mu_home)
                 as_ = rng.poisson(mu_away)
@@ -824,6 +846,12 @@ def simulate_relegation_chances(
             mu_away = avg_goals * strengths[at]["attack"] * strengths[ht]["defense"]
             if rating_method == "dixon_coles":
                 hs, as_ = _dixon_coles_sample(mu_home, mu_away, dc_rho, rng)
+            elif rating_method == "neg_binom" and dc_rho > 0:
+                r = 1.0 / dc_rho
+                p_home = r / (r + mu_home)
+                p_away = r / (r + mu_away)
+                hs = rng.negative_binomial(r, p_home)
+                as_ = rng.negative_binomial(r, p_away)
             else:
                 hs = rng.poisson(mu_home)
                 as_ = rng.poisson(mu_away)
@@ -910,6 +938,12 @@ def simulate_final_table(
             mu_away = avg_goals * strengths[at]["attack"] * strengths[ht]["defense"]
             if rating_method == "dixon_coles":
                 hs, as_ = _dixon_coles_sample(mu_home, mu_away, dc_rho, rng)
+            elif rating_method == "neg_binom" and dc_rho > 0:
+                r = 1.0 / dc_rho
+                p_home = r / (r + mu_home)
+                p_away = r / (r + mu_away)
+                hs = rng.negative_binomial(r, p_home)
+                as_ = rng.negative_binomial(r, p_away)
             else:
                 hs = rng.poisson(mu_home)
                 as_ = rng.poisson(mu_away)

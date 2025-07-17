@@ -177,6 +177,15 @@ def test_simulate_chances_neg_binom_seed_repeatability():
     assert abs(sum(chances1.values()) - 1.0) < 1e-6
 
 
+def test_neg_binom_differs_from_poisson():
+    df = parse_matches("data/Brasileirao2025A.txt")
+    rng = np.random.default_rng(123)
+    poisson_res = simulate_chances(df, iterations=50, rating_method="poisson", rng=rng)
+    rng = np.random.default_rng(123)
+    nb_res = simulate_chances(df, iterations=50, rating_method="neg_binom", rng=rng)
+    assert poisson_res != nb_res
+
+
 def test_simulate_chances_skellam_seed_repeatability():
     df = parse_matches('data/Brasileirao2025A.txt')
     rng = np.random.default_rng(66)
