@@ -4,10 +4,10 @@ This project provides a simple simulator for the 2025 Brasileirão Série A seas
 
 ## Usage
 
-Install dependencies and run the simulator:
+Install dependencies from `requirements.txt` and run the simulator:
 
 ```bash
-pip install pandas numpy statsmodels
+pip install -r requirements.txt
 python main.py --simulations 1000 --rating poisson
 ```
 
