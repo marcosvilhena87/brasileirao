@@ -380,7 +380,11 @@ def estimate_poisson_strengths(matches: pd.DataFrame):
 
 
 def estimate_negative_binomial_strengths(matches: pd.DataFrame):
-    """Fit a Negative Binomial regression model to estimate team strengths."""
+    """Fit a Negative Binomial regression model to estimate team strengths.
+
+    The dispersion parameter is estimated from the data and supplied to the
+    :class:`statsmodels.families.NegativeBinomial` family when fitting the GLM.
+    """
     import statsmodels.api as sm
     import statsmodels.formula.api as smf
 
@@ -403,13 +407,13 @@ def estimate_negative_binomial_strengths(matches: pd.DataFrame):
 
     df = pd.DataFrame(rows)
 
+    dispersion = _estimate_dispersion(matches)
+
     model = smf.glm(
         "goals ~ home + C(team) + C(opponent)",
         data=df,
-        family=sm.families.NegativeBinomial(),
+        family=sm.families.NegativeBinomial(alpha=dispersion),
     ).fit()
-
-    dispersion = _estimate_dispersion(matches)
 
     base_mu = float(np.exp(model.params["Intercept"]))
     home_adv = float(np.exp(model.params.get("home", 0.0)))
