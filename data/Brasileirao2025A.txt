@@ -139,7 +139,7 @@ TeamListedFirst: home
 20/07/2025	Vitoria		1-0	Bragantino
 20/07/2025	Sport		0-1	Botafogo
 20/07/2025	Palmeiras	3-2	Atletico-MG
-20/07/2025	Flamengo	0-0	Fluminense
+20/07/2025	Flamengo	1-0	Fluminense
 21/07/2025	Fluminense		Ceara
 21/07/2025	Botafogo		Mirassol
 21/07/2025	Palmeiras		Juventude
