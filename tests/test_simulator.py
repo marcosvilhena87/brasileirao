@@ -186,6 +186,30 @@ def test_neg_binom_differs_from_poisson():
     assert poisson_res != nb_res
 
 
+def test_estimate_negative_binomial_strengths_dispersion_used():
+    df = parse_matches("data/Brasileirao2025A.txt")
+    disp = simulator._estimate_dispersion(df)
+    strengths, base_mu, home_adv, returned_disp = simulator.estimate_negative_binomial_strengths(df)
+    assert np.isclose(disp, returned_disp)
+
+    import statsmodels.api as sm
+    import statsmodels.formula.api as smf
+
+    played = df.dropna(subset=["home_score", "away_score"])
+    rows = []
+    for _, row in played.iterrows():
+        rows.append({"team": row["home_team"], "opponent": row["away_team"], "home": 1, "goals": row["home_score"]})
+        rows.append({"team": row["away_team"], "opponent": row["home_team"], "home": 0, "goals": row["away_score"]})
+    manual_df = pd.DataFrame(rows)
+    manual_model = smf.glm(
+        "goals ~ home + C(team) + C(opponent)",
+        data=manual_df,
+        family=sm.families.NegativeBinomial(alpha=disp),
+    ).fit()
+    manual_mu = float(np.exp(manual_model.params["Intercept"]))
+    assert np.isclose(base_mu, manual_mu)
+
+
 def test_simulate_chances_skellam_seed_repeatability():
     df = parse_matches('data/Brasileirao2025A.txt')
     rng = np.random.default_rng(66)
