@@ -697,6 +697,56 @@ def get_strengths(
     return strengths, avg_goals, home_adv, extra_param
 
 
+def _simulate_table(
+    played_df: pd.DataFrame,
+    remaining: pd.DataFrame,
+    strengths: dict[str, dict[str, float]],
+    avg_goals: float,
+    home_adv: float,
+    team_home_advantages: dict[str, float],
+    rating_method: str,
+    extra_param: float,
+    rng: np.random.Generator,
+) -> pd.DataFrame:
+    """Return a simulated table based on remaining fixtures."""
+
+    sims: list[dict] = []
+    for _, row in remaining.iterrows():
+        ht = row["home_team"]
+        at = row["away_team"]
+        factor = team_home_advantages.get(ht, 1.0)
+        mu_home = (
+            avg_goals
+            * strengths[ht]["attack"]
+            * strengths[at]["defense"]
+            * home_adv
+            * factor
+        )
+        mu_away = avg_goals * strengths[at]["attack"] * strengths[ht]["defense"]
+        if rating_method == "dixon_coles":
+            hs, as_ = _dixon_coles_sample(mu_home, mu_away, extra_param, rng)
+        elif rating_method == "neg_binom" and extra_param > 0:
+            r = 1.0 / extra_param
+            p_home = r / (r + mu_home)
+            p_away = r / (r + mu_away)
+            hs = rng.negative_binomial(r, p_home)
+            as_ = rng.negative_binomial(r, p_away)
+        else:
+            hs = rng.poisson(mu_home)
+            as_ = rng.poisson(mu_away)
+        sims.append(
+            {
+                "date": row["date"],
+                "home_team": ht,
+                "away_team": at,
+                "home_score": hs,
+                "away_score": as_,
+            }
+        )
+    all_matches = pd.concat([played_df, pd.DataFrame(sims)], ignore_index=True)
+    return league_table(all_matches)
+
+
 def simulate_chances(
     matches: pd.DataFrame,
     iterations: int = 1000,
@@ -764,28 +814,18 @@ def simulate_chances(
     remaining = matches[matches['home_score'].isna() | matches['away_score'].isna()]
 
     for _ in range(iterations):
-        sims = []
-        for _, row in remaining.iterrows():
-            ht = row['home_team']
-            at = row['away_team']
-            factor = team_home_advantages.get(ht, 1.0)
-            mu_home = avg_goals * strengths[ht]['attack'] * strengths[at]['defense'] * home_adv * factor
-            mu_away = avg_goals * strengths[at]['attack'] * strengths[ht]['defense']
-            if rating_method == "dixon_coles":
-                hs, as_ = _dixon_coles_sample(mu_home, mu_away, extra_param, rng)
-            elif rating_method == "neg_binom" and extra_param > 0:
-                r = 1.0 / extra_param
-                p_home = r / (r + mu_home)
-                p_away = r / (r + mu_away)
-                hs = rng.negative_binomial(r, p_home)
-                as_ = rng.negative_binomial(r, p_away)
-            else:
-                hs = rng.poisson(mu_home)
-                as_ = rng.poisson(mu_away)
-            sims.append({'date': row['date'], 'home_team': ht, 'away_team': at, 'home_score': hs, 'away_score': as_})
-        all_matches = pd.concat([played_df, pd.DataFrame(sims)], ignore_index=True)
-        table = league_table(all_matches)
-        champs[table.iloc[0]['team']] += 1
+        table = _simulate_table(
+            played_df,
+            remaining,
+            strengths,
+            avg_goals,
+            home_adv,
+            team_home_advantages,
+            rating_method,
+            extra_param,
+            rng,
+        )
+        champs[table.iloc[0]["team"]] += 1
 
     for t in champs:
         champs[t] = champs[t] / iterations
@@ -842,41 +882,17 @@ def simulate_relegation_chances(
     remaining = matches[matches["home_score"].isna() | matches["away_score"].isna()]
 
     for _ in range(iterations):
-        sims = []
-        for _, row in remaining.iterrows():
-            ht = row["home_team"]
-            at = row["away_team"]
-            factor = team_home_advantages.get(ht, 1.0)
-            mu_home = (
-                avg_goals
-                * strengths[ht]["attack"]
-                * strengths[at]["defense"]
-                * home_adv
-                * factor
-            )
-            mu_away = avg_goals * strengths[at]["attack"] * strengths[ht]["defense"]
-            if rating_method == "dixon_coles":
-                hs, as_ = _dixon_coles_sample(mu_home, mu_away, extra_param, rng)
-            elif rating_method == "neg_binom" and extra_param > 0:
-                r = 1.0 / extra_param
-                p_home = r / (r + mu_home)
-                p_away = r / (r + mu_away)
-                hs = rng.negative_binomial(r, p_home)
-                as_ = rng.negative_binomial(r, p_away)
-            else:
-                hs = rng.poisson(mu_home)
-                as_ = rng.poisson(mu_away)
-            sims.append(
-                {
-                    "date": row["date"],
-                    "home_team": ht,
-                    "away_team": at,
-                    "home_score": hs,
-                    "away_score": as_,
-                }
-            )
-        all_matches = pd.concat([played_df, pd.DataFrame(sims)], ignore_index=True)
-        table = league_table(all_matches)
+        table = _simulate_table(
+            played_df,
+            remaining,
+            strengths,
+            avg_goals,
+            home_adv,
+            team_home_advantages,
+            rating_method,
+            extra_param,
+            rng,
+        )
         for team in table.tail(4)["team"]:
             relegated[team] += 1
 
@@ -934,41 +950,17 @@ def simulate_final_table(
     remaining = matches[matches["home_score"].isna() | matches["away_score"].isna()]
 
     for _ in range(iterations):
-        sims: list[dict] = []
-        for _, row in remaining.iterrows():
-            ht = row["home_team"]
-            at = row["away_team"]
-            factor = team_home_advantages.get(ht, 1.0)
-            mu_home = (
-                avg_goals
-                * strengths[ht]["attack"]
-                * strengths[at]["defense"]
-                * home_adv
-                * factor
-            )
-            mu_away = avg_goals * strengths[at]["attack"] * strengths[ht]["defense"]
-            if rating_method == "dixon_coles":
-                hs, as_ = _dixon_coles_sample(mu_home, mu_away, extra_param, rng)
-            elif rating_method == "neg_binom" and extra_param > 0:
-                r = 1.0 / extra_param
-                p_home = r / (r + mu_home)
-                p_away = r / (r + mu_away)
-                hs = rng.negative_binomial(r, p_home)
-                as_ = rng.negative_binomial(r, p_away)
-            else:
-                hs = rng.poisson(mu_home)
-                as_ = rng.poisson(mu_away)
-            sims.append(
-                {
-                    "date": row["date"],
-                    "home_team": ht,
-                    "away_team": at,
-                    "home_score": hs,
-                    "away_score": as_,
-                }
-            )
-        all_matches = pd.concat([played_df, pd.DataFrame(sims)], ignore_index=True)
-        table = league_table(all_matches)
+        table = _simulate_table(
+            played_df,
+            remaining,
+            strengths,
+            avg_goals,
+            home_adv,
+            team_home_advantages,
+            rating_method,
+            extra_param,
+            rng,
+        )
         for idx, row in table.iterrows():
             pos_totals[row["team"]] += idx + 1
             points_totals[row["team"]] += row["points"]
