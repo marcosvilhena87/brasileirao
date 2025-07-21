@@ -244,6 +244,22 @@ def test_team_home_advantage_changes_results():
     assert base != custom
 
 
+def test_reuse_team_home_advantages():
+    df = parse_matches("data/Brasileirao2025A.txt")
+    adv = simulator._estimate_team_home_advantages(df)
+    rng = np.random.default_rng(15)
+    with_adv = simulate_chances(df, iterations=5, rng=rng, team_home_advantages=adv)
+    rng = np.random.default_rng(15)
+    auto = simulate_chances(df, iterations=5, rng=rng)
+    assert with_adv == auto
+
+    rng = np.random.default_rng(15)
+    table_adv = simulator.simulate_final_table(df, iterations=5, rng=rng, team_home_advantages=adv)
+    rng = np.random.default_rng(15)
+    table_auto = simulator.simulate_final_table(df, iterations=5, rng=rng)
+    pd.testing.assert_frame_equal(table_adv, table_auto)
+
+
 def test_home_field_advantage_changes_elo_results():
     df = parse_matches("data/Brasileirao2025A.txt")
     rng = np.random.default_rng(22)
