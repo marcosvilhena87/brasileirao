@@ -267,6 +267,16 @@ def _estimate_team_home_advantages(matches: pd.DataFrame) -> dict[str, float]:
     return factors
 
 
+def _prepare_team_home_advantages(
+    matches: pd.DataFrame, team_home_advantages: dict[str, float] | None
+) -> dict[str, float]:
+    """Return home advantage factors merging estimates with custom values."""
+    base = _estimate_team_home_advantages(matches)
+    if team_home_advantages:
+        base.update(team_home_advantages)
+    return base
+
+
 def _estimate_dispersion(matches: pd.DataFrame) -> float:
     """Return method-of-moments dispersion for Negative Binomial sampling."""
     played = matches.dropna(subset=["home_score", "away_score"])
@@ -791,12 +801,9 @@ def simulate_chances(
     if rng is None:
         rng = np.random.default_rng()
 
-    if team_home_advantages is None:
-        team_home_advantages = _estimate_team_home_advantages(matches)
-    else:
-        merged = _estimate_team_home_advantages(matches)
-        merged.update(team_home_advantages)
-        team_home_advantages = merged
+    team_home_advantages = _prepare_team_home_advantages(
+        matches, team_home_advantages
+    )
 
     strengths, avg_goals, home_adv, extra_param = get_strengths(
         matches,
@@ -858,12 +865,9 @@ def simulate_relegation_chances(
     if rng is None:
         rng = np.random.default_rng()
 
-    if team_home_advantages is None:
-        team_home_advantages = _estimate_team_home_advantages(matches)
-    else:
-        merged = _estimate_team_home_advantages(matches)
-        merged.update(team_home_advantages)
-        team_home_advantages = merged
+    team_home_advantages = _prepare_team_home_advantages(
+        matches, team_home_advantages
+    )
 
     strengths, avg_goals, home_adv, extra_param = get_strengths(
         matches,
@@ -925,12 +929,9 @@ def simulate_final_table(
     if rng is None:
         rng = np.random.default_rng()
 
-    if team_home_advantages is None:
-        team_home_advantages = _estimate_team_home_advantages(matches)
-    else:
-        merged = _estimate_team_home_advantages(matches)
-        merged.update(team_home_advantages)
-        team_home_advantages = merged
+    team_home_advantages = _prepare_team_home_advantages(
+        matches, team_home_advantages
+    )
 
     strengths, avg_goals, home_adv, extra_param = get_strengths(
         matches,
