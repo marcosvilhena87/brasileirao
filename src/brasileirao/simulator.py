@@ -660,15 +660,22 @@ def get_strengths(
     Parameters other than ``matches`` and ``rating_method`` mirror those of the
     :func:`simulate_chances` routine.  The returned tuple contains the attack and
     defence multipliers for each team, the average goals per game, the overall
-    home advantage factor and, for the Dixon-Coles model, the ``rho`` parameter.
-    The final value is ``0.0`` for all other methods.
+    home advantage factor and an additional value depending on the chosen
+    ``rating_method``:
+
+    ``dixon_coles``
+        The Dixon--Coles correlation parameter ``rho``.
+    ``neg_binom``
+        The estimated dispersion parameter of the Negative Binomial model.
+    otherwise
+        ``0.0``.
     """
 
-    dc_rho = 0.0
+    extra_param = 0.0
     if rating_method == "poisson":
         strengths, avg_goals, home_adv = estimate_poisson_strengths(matches)
     elif rating_method == "neg_binom":
-        strengths, avg_goals, home_adv, dc_rho = estimate_negative_binomial_strengths(matches)
+        strengths, avg_goals, home_adv, extra_param = estimate_negative_binomial_strengths(matches)
     elif rating_method == "skellam":
         strengths, avg_goals, home_adv = estimate_skellam_strengths(matches)
     elif rating_method == "historic_ratio":
@@ -678,7 +685,7 @@ def get_strengths(
             matches, K=elo_k, home_field_advantage=home_field_advantage
         )
     elif rating_method == "dixon_coles":
-        strengths, avg_goals, home_adv, dc_rho = estimate_dixon_coles_strengths(matches)
+        strengths, avg_goals, home_adv, extra_param = estimate_dixon_coles_strengths(matches)
     elif rating_method == "leader_history":
         paths = leader_history_paths or ["data/Brasileirao2024A.txt"]
         strengths, avg_goals, home_adv = estimate_leader_history_strengths(
@@ -687,7 +694,7 @@ def get_strengths(
     else:
         strengths, avg_goals, home_adv = _estimate_strengths(matches, smooth=smooth)
 
-    return strengths, avg_goals, home_adv, dc_rho
+    return strengths, avg_goals, home_adv, extra_param
 
 
 def simulate_chances(
@@ -741,7 +748,7 @@ def simulate_chances(
         merged.update(team_home_advantages)
         team_home_advantages = merged
 
-    strengths, avg_goals, home_adv, dc_rho = get_strengths(
+    strengths, avg_goals, home_adv, extra_param = get_strengths(
         matches,
         rating_method,
         elo_k=elo_k,
@@ -765,9 +772,9 @@ def simulate_chances(
             mu_home = avg_goals * strengths[ht]['attack'] * strengths[at]['defense'] * home_adv * factor
             mu_away = avg_goals * strengths[at]['attack'] * strengths[ht]['defense']
             if rating_method == "dixon_coles":
-                hs, as_ = _dixon_coles_sample(mu_home, mu_away, dc_rho, rng)
-            elif rating_method == "neg_binom" and dc_rho > 0:
-                r = 1.0 / dc_rho
+                hs, as_ = _dixon_coles_sample(mu_home, mu_away, extra_param, rng)
+            elif rating_method == "neg_binom" and extra_param > 0:
+                r = 1.0 / extra_param
                 p_home = r / (r + mu_home)
                 p_away = r / (r + mu_away)
                 hs = rng.negative_binomial(r, p_home)
@@ -818,7 +825,7 @@ def simulate_relegation_chances(
         merged.update(team_home_advantages)
         team_home_advantages = merged
 
-    strengths, avg_goals, home_adv, dc_rho = get_strengths(
+    strengths, avg_goals, home_adv, extra_param = get_strengths(
         matches,
         rating_method,
         elo_k=elo_k,
@@ -849,9 +856,9 @@ def simulate_relegation_chances(
             )
             mu_away = avg_goals * strengths[at]["attack"] * strengths[ht]["defense"]
             if rating_method == "dixon_coles":
-                hs, as_ = _dixon_coles_sample(mu_home, mu_away, dc_rho, rng)
-            elif rating_method == "neg_binom" and dc_rho > 0:
-                r = 1.0 / dc_rho
+                hs, as_ = _dixon_coles_sample(mu_home, mu_away, extra_param, rng)
+            elif rating_method == "neg_binom" and extra_param > 0:
+                r = 1.0 / extra_param
                 p_home = r / (r + mu_home)
                 p_away = r / (r + mu_away)
                 hs = rng.negative_binomial(r, p_home)
@@ -909,7 +916,7 @@ def simulate_final_table(
         merged.update(team_home_advantages)
         team_home_advantages = merged
 
-    strengths, avg_goals, home_adv, dc_rho = get_strengths(
+    strengths, avg_goals, home_adv, extra_param = get_strengths(
         matches,
         rating_method,
         elo_k=elo_k,
@@ -941,9 +948,9 @@ def simulate_final_table(
             )
             mu_away = avg_goals * strengths[at]["attack"] * strengths[ht]["defense"]
             if rating_method == "dixon_coles":
-                hs, as_ = _dixon_coles_sample(mu_home, mu_away, dc_rho, rng)
-            elif rating_method == "neg_binom" and dc_rho > 0:
-                r = 1.0 / dc_rho
+                hs, as_ = _dixon_coles_sample(mu_home, mu_away, extra_param, rng)
+            elif rating_method == "neg_binom" and extra_param > 0:
+                r = 1.0 / extra_param
                 p_home = r / (r + mu_home)
                 p_away = r / (r + mu_away)
                 hs = rng.negative_binomial(r, p_home)
