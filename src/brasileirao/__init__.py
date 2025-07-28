@@ -7,9 +7,6 @@ from .simulator import (
     simulate_relegation_chances,
     simulate_final_table,
     summary_table,
-    estimate_dixon_coles_strengths,
-    compute_leader_stats,
-    estimate_leader_history_strengths,
 )
 
 __all__ = [
@@ -19,8 +16,4 @@ __all__ = [
     "simulate_relegation_chances",
     "simulate_final_table",
     "summary_table",
-    "estimate_dixon_coles_strengths",
-    "compute_leader_stats",
-    "estimate_leader_history_strengths",
 ]
-
