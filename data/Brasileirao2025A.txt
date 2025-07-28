@@ -140,34 +140,22 @@ TeamListedFirst: home
 20/07/2025	Sport		0-1	Botafogo
 20/07/2025	Palmeiras	3-2	Atletico-MG
 20/07/2025	Flamengo	1-0	Fluminense
-21/07/2025	Fluminense		Ceara
-21/07/2025	Botafogo		Mirassol
-21/07/2025	Palmeiras		Juventude
-21/07/2025	Sport			Flamengo
-21/07/2025	Santos			Palmeiras
-21/07/2025	Mirassol		Fluminense
-21/07/2025	Atletico-MG		Sport
-21/07/2025	Bahia			Internacional
-21/07/2025	Juventude		Vasco
-23/07/2025	Gremio			Botafogo
-23/07/2025	Atletico-MG		Fortaleza
-23/07/2025	Vasco			Bahia
-23/07/2025	Ceara			Mirassol
-23/07/2025	Fluminense		Palmeiras
-23/07/2025	Corinthians		Cruzeiro
-23/07/2025	Vitoria			Sport
-23/07/2025	Bragantino		Flamengo
-23/07/2025	Santos			Internacional
-24/07/2025	Juventude		Sao Paulo
-26/07/2025	Fortaleza		Bragantino
-26/07/2025	Mirassol		Vitoria
-26/07/2025	Sport			Santos
-26/07/2025	Botafogo		Corinthians
-26/07/2025	Palmeiras		Gremio
-27/07/2025	Cruzeiro		Ceara
-27/07/2025	Sao Paulo		Fluminense
-27/07/2025	Bahia			Juventude
-27/07/2025	Internacional		Vasco
+23/07/2025	Fluminense	1-2	Palmeiras
+23/07/2025	Ceara		0-2	Mirassol
+23/07/2025	Corinthians	0-0	Cruzeiro
+23/07/2025	Vitoria		2-2	Sport
+23/07/2025	Bragantino	1-2	Flamengo
+23/07/2025	Santos		1-2	Internacional
+24/07/2025	Juventude	0-1	Sao Paulo
+26/07/2025	Fortaleza	3-1	Bragantino
+26/07/2025	Mirassol	1-1	Vitoria
+26/07/2025	Sport		2-2	Santos
+26/07/2025	Botafogo	1-1	Corinthians
+26/07/2025	Palmeiras	1-0	Gremio
+27/07/2025	Cruzeiro	1-2	Ceara
+27/07/2025	Sao Paulo	3-1	Fluminense
+27/07/2025	Bahia		3-0	Juventude
+27/07/2025	Internacional	1-1	Vasco
 27/07/2025	Flamengo		Atletico-MG
 29/07/2025	Gremio			Fortaleza
 02/08/2025	Sport			Bahia
@@ -180,6 +168,18 @@ TeamListedFirst: home
 03/08/2025	Vitoria			Palmeiras
 03/08/2025	Internacional		Sao Paulo
 04/08/2025	Santos			Juventude
+06/08/2025	Gremio			Botafogo
+06/08/2025	Atletico-MG		Fortaleza
+06/08/2025	Vasco			Bahia
+06/08/2025	Fluminense		Ceara
+06/08/2025	Botafogo		Mirassol
+06/08/2025	Palmeiras		Juventude
+06/08/2025	Sport			Flamengo
+06/08/2025	Santos			Palmeiras
+06/08/2025	Mirassol		Fluminense
+06/08/2025	Atletico-MG		Sport
+06/08/2025	Bahia			Internacional
+06/08/2025	Juventude		Vasco
 10/08/2025	Gremio			Sport
 10/08/2025	Fortaleza		Botafogo
 10/08/2025	Cruzeiro		Santos
