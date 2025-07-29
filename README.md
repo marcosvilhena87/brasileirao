@@ -46,3 +46,7 @@ from brasileirao import (
     simulate_final_table,
 )
 ```
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
