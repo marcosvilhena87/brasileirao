@@ -29,13 +29,70 @@ def main() -> None:
         default=None,
         help="random seed for repeatable simulations",
     )
+    parser.add_argument(
+        "--smooth",
+        type=float,
+        default=1.0,
+        help="strength smoothing factor",
+    )
+    parser.add_argument(
+        "--avg-goals-baseline",
+        type=float,
+        default=2.5,
+        help="baseline average goals when no data",
+    )
+    parser.add_argument(
+        "--home-adv-baseline",
+        type=float,
+        default=1.0,
+        help="baseline league home advantage",
+    )
+    parser.add_argument(
+        "--home-smooth",
+        type=float,
+        default=0.0,
+        help="smoothing factor for team home advantage",
+    )
+    parser.add_argument(
+        "--home-baseline",
+        type=float,
+        default=None,
+        help="override baseline for team home advantage",
+    )
     args = parser.parse_args()
 
     matches = parse_matches(args.file)
     rng = np.random.default_rng(args.seed) if args.seed is not None else None
-    chances = simulate_chances(matches, iterations=args.simulations, rng=rng)
-    relegation = simulate_relegation_chances(matches, iterations=args.simulations, rng=rng)
-    table_proj = simulate_final_table(matches, iterations=args.simulations, rng=rng)
+    chances = simulate_chances(
+        matches,
+        iterations=args.simulations,
+        rng=rng,
+        smooth=args.smooth,
+        avg_goals_baseline=args.avg_goals_baseline,
+        home_adv_baseline=args.home_adv_baseline,
+        home_smooth=args.home_smooth,
+        home_baseline=args.home_baseline,
+    )
+    relegation = simulate_relegation_chances(
+        matches,
+        iterations=args.simulations,
+        rng=rng,
+        smooth=args.smooth,
+        avg_goals_baseline=args.avg_goals_baseline,
+        home_adv_baseline=args.home_adv_baseline,
+        home_smooth=args.home_smooth,
+        home_baseline=args.home_baseline,
+    )
+    table_proj = simulate_final_table(
+        matches,
+        iterations=args.simulations,
+        rng=rng,
+        smooth=args.smooth,
+        avg_goals_baseline=args.avg_goals_baseline,
+        home_adv_baseline=args.home_adv_baseline,
+        home_smooth=args.home_smooth,
+        home_baseline=args.home_baseline,
+    )
 
     summary = table_proj.copy()
     summary["title"] = summary["team"].map(chances)

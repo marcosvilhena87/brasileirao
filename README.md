@@ -11,6 +11,13 @@ pip install -r requirements.txt
 python main.py --simulations 1000
 ```
 
+You can customise the strength estimation with additional options. For example:
+
+```bash
+python main.py --simulations 1000 --smooth 2 \
+    --home-smooth 1 --avg-goals-baseline 2.6 --home-adv-baseline 1.05
+```
+
 The simulator uses a rating model similar to the one employed by SportsClubStats. Team attack and defence strengths are based on goals scored and conceded so far in the season. Remaining fixtures are simulated with Poisson-distributed scores using these strengths.
 
 The script outputs the estimated chance of winning the title for each team. It then prints the probability of each side finishing in the bottom four and being relegated. It also estimates the average final position and points of every club.

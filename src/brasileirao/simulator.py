@@ -161,14 +161,22 @@ def league_table(matches: pd.DataFrame) -> pd.DataFrame:
 # Rating model (SportsClubStats-style)
 # ---------------------------------------------------------------------------
 
-def _estimate_strengths(matches: pd.DataFrame, smooth: float = 1.0) -> Tuple[Dict[str, Dict[str, float]], float, float]:
+def _estimate_strengths(
+    matches: pd.DataFrame,
+    smooth: float = 1.0,
+    *,
+    avg_goals_baseline: float = 2.5,
+    home_adv_baseline: float = 1.0,
+) -> Tuple[Dict[str, Dict[str, float]], float, float]:
     played = matches.dropna(subset=["home_score", "away_score"])
     total_goals = played["home_score"].sum() + played["away_score"].sum()
     total_games = len(played)
-    avg_goals = total_goals / total_games if total_games else 2.5
-    home_adv = (
-        played["home_score"].sum() / played["away_score"].sum() if played["away_score"].sum() else 1.0
-    )
+    avg_goals = total_goals / total_games if total_games else avg_goals_baseline
+    away_total = played["away_score"].sum()
+    if away_total:
+        home_adv = played["home_score"].sum() / away_total
+    else:
+        home_adv = home_adv_baseline
 
     teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
     strengths: Dict[str, Dict[str, float]] = {}
@@ -191,13 +199,19 @@ def _estimate_strengths(matches: pd.DataFrame, smooth: float = 1.0) -> Tuple[Dic
     return strengths, avg_goals, home_adv
 
 
-def _estimate_team_home_advantages(matches: pd.DataFrame) -> Dict[str, float]:
+def _estimate_team_home_advantages(
+    matches: pd.DataFrame,
+    smooth: float = 0.0,
+    *,
+    baseline: float | None = None,
+) -> Dict[str, float]:
     played = matches.dropna(subset=["home_score", "away_score"])
     teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
 
-    total_home = played["home_score"].sum()
-    total_away = played["away_score"].sum()
-    baseline = total_home / total_away if total_away else 1.0
+    if baseline is None:
+        total_home = played["home_score"].sum()
+        total_away = played["away_score"].sum()
+        baseline = total_home / total_away if total_away else 1.0
 
     factors: Dict[str, float] = {}
     for t in teams:
@@ -206,8 +220,8 @@ def _estimate_team_home_advantages(matches: pd.DataFrame) -> Dict[str, float]:
         if not len(home_games) or not len(away_games):
             factors[t] = 1.0
             continue
-        home_gpg = home_games["home_score"].mean()
-        away_gpg = away_games["away_score"].mean()
+        home_gpg = (home_games["home_score"].sum() + smooth) / (len(home_games) + smooth)
+        away_gpg = (away_games["away_score"].sum() + smooth) / (len(away_games) + smooth)
         if away_gpg == 0 or np.isnan(home_gpg) or np.isnan(away_gpg):
             factors[t] = 1.0
         else:
@@ -215,8 +229,14 @@ def _estimate_team_home_advantages(matches: pd.DataFrame) -> Dict[str, float]:
     return factors
 
 
-def _prepare_team_home_advantages(matches: pd.DataFrame, custom: Dict[str, float] | None) -> Dict[str, float]:
-    base = _estimate_team_home_advantages(matches)
+def _prepare_team_home_advantages(
+    matches: pd.DataFrame,
+    custom: Dict[str, float] | None,
+    *,
+    smooth: float = 0.0,
+    baseline: float | None = None,
+) -> Dict[str, float]:
+    base = _estimate_team_home_advantages(matches, smooth=smooth, baseline=baseline)
     if custom:
         base.update(custom)
     return base
@@ -274,13 +294,27 @@ def simulate_chances(
     rng: np.random.Generator | None = None,
     team_home_advantages: Dict[str, float] | None = None,
     smooth: float = 1.0,
+    avg_goals_baseline: float = 2.5,
+    home_adv_baseline: float = 1.0,
+    home_smooth: float = 0.0,
+    home_baseline: float | None = None,
 ) -> Dict[str, float]:
     """Return title probabilities using a SportsClubStats-style model."""
     if rng is None:
         rng = np.random.default_rng()
 
-    team_home_advantages = _prepare_team_home_advantages(matches, team_home_advantages)
-    strengths, avg_goals, home_adv = _estimate_strengths(matches, smooth=smooth)
+    team_home_advantages = _prepare_team_home_advantages(
+        matches,
+        team_home_advantages,
+        smooth=home_smooth,
+        baseline=home_baseline,
+    )
+    strengths, avg_goals, home_adv = _estimate_strengths(
+        matches,
+        smooth=smooth,
+        avg_goals_baseline=avg_goals_baseline,
+        home_adv_baseline=home_adv_baseline,
+    )
 
     teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
     champs = {t: 0 for t in teams}
@@ -312,13 +346,27 @@ def simulate_relegation_chances(
     rng: np.random.Generator | None = None,
     team_home_advantages: Dict[str, float] | None = None,
     smooth: float = 1.0,
+    avg_goals_baseline: float = 2.5,
+    home_adv_baseline: float = 1.0,
+    home_smooth: float = 0.0,
+    home_baseline: float | None = None,
 ) -> Dict[str, float]:
     """Return probabilities of finishing in the bottom four."""
     if rng is None:
         rng = np.random.default_rng()
 
-    team_home_advantages = _prepare_team_home_advantages(matches, team_home_advantages)
-    strengths, avg_goals, home_adv = _estimate_strengths(matches, smooth=smooth)
+    team_home_advantages = _prepare_team_home_advantages(
+        matches,
+        team_home_advantages,
+        smooth=home_smooth,
+        baseline=home_baseline,
+    )
+    strengths, avg_goals, home_adv = _estimate_strengths(
+        matches,
+        smooth=smooth,
+        avg_goals_baseline=avg_goals_baseline,
+        home_adv_baseline=home_adv_baseline,
+    )
 
     teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
     relegated = {t: 0 for t in teams}
@@ -351,13 +399,27 @@ def simulate_final_table(
     rng: np.random.Generator | None = None,
     team_home_advantages: Dict[str, float] | None = None,
     smooth: float = 1.0,
+    avg_goals_baseline: float = 2.5,
+    home_adv_baseline: float = 1.0,
+    home_smooth: float = 0.0,
+    home_baseline: float | None = None,
 ) -> pd.DataFrame:
     """Project average finishing position and points."""
     if rng is None:
         rng = np.random.default_rng()
 
-    team_home_advantages = _prepare_team_home_advantages(matches, team_home_advantages)
-    strengths, avg_goals, home_adv = _estimate_strengths(matches, smooth=smooth)
+    team_home_advantages = _prepare_team_home_advantages(
+        matches,
+        team_home_advantages,
+        smooth=home_smooth,
+        baseline=home_baseline,
+    )
+    strengths, avg_goals, home_adv = _estimate_strengths(
+        matches,
+        smooth=smooth,
+        avg_goals_baseline=avg_goals_baseline,
+        home_adv_baseline=home_adv_baseline,
+    )
 
     teams = pd.unique(matches[["home_team", "away_team"]].values.ravel())
     pos_totals = {t: 0.0 for t in teams}
@@ -402,6 +464,10 @@ def summary_table(
     rng: np.random.Generator | None = None,
     team_home_advantages: Dict[str, float] | None = None,
     smooth: float = 1.0,
+    avg_goals_baseline: float = 2.5,
+    home_adv_baseline: float = 1.0,
+    home_smooth: float = 0.0,
+    home_baseline: float | None = None,
 ) -> pd.DataFrame:
     """Return a combined projection table."""
     chances = simulate_chances(
@@ -410,6 +476,10 @@ def summary_table(
         rng=rng,
         team_home_advantages=team_home_advantages,
         smooth=smooth,
+        avg_goals_baseline=avg_goals_baseline,
+        home_adv_baseline=home_adv_baseline,
+        home_smooth=home_smooth,
+        home_baseline=home_baseline,
     )
     relegation = simulate_relegation_chances(
         matches,
@@ -417,6 +487,10 @@ def summary_table(
         rng=rng,
         team_home_advantages=team_home_advantages,
         smooth=smooth,
+        avg_goals_baseline=avg_goals_baseline,
+        home_adv_baseline=home_adv_baseline,
+        home_smooth=home_smooth,
+        home_baseline=home_baseline,
     )
     table = simulate_final_table(
         matches,
@@ -424,6 +498,10 @@ def summary_table(
         rng=rng,
         team_home_advantages=team_home_advantages,
         smooth=smooth,
+        avg_goals_baseline=avg_goals_baseline,
+        home_adv_baseline=home_adv_baseline,
+        home_smooth=home_smooth,
+        home_baseline=home_baseline,
     )
 
     table = table.sort_values("position").reset_index(drop=True)

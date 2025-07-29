@@ -64,6 +64,30 @@ def test_estimate_strengths_zero_goals():
     assert strengths["C"]["defense"] > 0
 
 
+def test_estimate_strengths_custom_baselines():
+    df = parse_matches('data/Brasileirao2025A.txt')
+    s1, ag1, ha1 = simulator._estimate_strengths(
+        df,
+        smooth=2.0,
+        avg_goals_baseline=3.0,
+        home_adv_baseline=1.1,
+    )
+    s2, ag2, ha2 = simulator._estimate_strengths(
+        df,
+        smooth=2.0,
+        avg_goals_baseline=3.0,
+        home_adv_baseline=1.1,
+    )
+    assert s1 == s2 and ag1 == ag2 and ha1 == ha2
+
+
+def test_estimate_team_home_advantages_custom():
+    df = parse_matches('data/Brasileirao2025A.txt')
+    adv = simulator._estimate_team_home_advantages(df, smooth=1.0, baseline=1.1)
+    teams = pd.unique(df[["home_team", "away_team"]].values.ravel())
+    assert set(adv.keys()) == set(teams)
+
+
 def test_simulate_relegation_chances_sum_to_four():
     df = parse_matches('data/Brasileirao2025A.txt')
     probs = simulator.simulate_relegation_chances(df, iterations=10)
