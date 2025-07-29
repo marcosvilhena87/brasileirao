@@ -21,7 +21,18 @@ python main.py --simulations 1000 --smooth 2 \
 The default home advantage baseline is ``1.3``, roughly matching the
 average home advantage observed in recent Série A seasons.
 
-The simulator uses a rating model similar to the one employed by SportsClubStats. Team attack and defence strengths are based on goals scored and conceded so far in the season. Remaining fixtures are simulated with Poisson-distributed scores using these strengths.
+### Default parameters
+
+The command-line tool exposes several options for tweaking the model. Their
+default values follow the SportsClubStats approach:
+
+- `--smooth`: ``1.0``
+- `--avg-goals-baseline`: ``2.5``
+- `--home-adv-baseline`: ``1.3``
+- `--home-smooth`: ``0.0``
+- `--home-baseline`: ``None``
+
+By default the simulator uses a SportsClubStats-style rating model. Team attack and defence strengths are based on goals scored and conceded so far in the season. Remaining fixtures are simulated with Poisson-distributed scores using these strengths.
 
 The script outputs the estimated chance of winning the title for each team. It then prints the probability of each side finishing in the bottom four and being relegated. It also estimates the average final position and points of every club.
 
