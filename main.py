@@ -44,7 +44,7 @@ def main() -> None:
     parser.add_argument(
         "--home-adv-baseline",
         type=float,
-        default=1.0,
+        default=1.3,
         help="baseline league home advantage",
     )
     parser.add_argument(

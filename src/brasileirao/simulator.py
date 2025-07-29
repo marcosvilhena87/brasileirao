@@ -295,7 +295,7 @@ def simulate_chances(
     team_home_advantages: Dict[str, float] | None = None,
     smooth: float = 1.0,
     avg_goals_baseline: float = 2.5,
-    home_adv_baseline: float = 1.0,
+    home_adv_baseline: float = 1.3,
     home_smooth: float = 0.0,
     home_baseline: float | None = None,
 ) -> Dict[str, float]:
@@ -347,7 +347,7 @@ def simulate_relegation_chances(
     team_home_advantages: Dict[str, float] | None = None,
     smooth: float = 1.0,
     avg_goals_baseline: float = 2.5,
-    home_adv_baseline: float = 1.0,
+    home_adv_baseline: float = 1.3,
     home_smooth: float = 0.0,
     home_baseline: float | None = None,
 ) -> Dict[str, float]:
@@ -400,7 +400,7 @@ def simulate_final_table(
     team_home_advantages: Dict[str, float] | None = None,
     smooth: float = 1.0,
     avg_goals_baseline: float = 2.5,
-    home_adv_baseline: float = 1.0,
+    home_adv_baseline: float = 1.3,
     home_smooth: float = 0.0,
     home_baseline: float | None = None,
 ) -> pd.DataFrame:
