@@ -1,9 +1,14 @@
-import argparse
+"""Command-line interface for running Brasileir\u00e3o simulations."""
+
+# pylint: disable=wrong-import-position
+
 import os
 import sys
-import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
+
+import argparse
+import numpy as np
 from brasileirao import (
     parse_matches,
     simulate_chances,
