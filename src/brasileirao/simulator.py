@@ -1,3 +1,11 @@
+"""Utilities for parsing match fixtures and running Monte Carlo simulations.
+
+This module reads fixtures exported from SportsClubStats and provides
+functions to compute league tables and run a SportsClubStats-style model to
+project results.  It powers the public functions exposed in
+``brasileirao.__init__``.
+"""
+
 from __future__ import annotations
 
 import re
@@ -6,7 +14,6 @@ from typing import Dict, Tuple
 
 import numpy as np
 import pandas as pd
-from scipy.stats import poisson
 
 
 # ---------------------------------------------------------------------------
